@@ -8,6 +8,7 @@
   } from '$env/static/public';
 
   import {
+    createMap,
     loadGoogleMapsLibrary
   } from "$lib/googleMaps";
 
@@ -22,14 +23,14 @@
   }
 
   async function initMap() {
-    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    map = new Map(document.getElementById("map"), {
-      center: { lat: parseFloat(lat), lng: parseFloat(lng) },
-      zoom: 12,
-      mapId: mapID
-    });
+    map = await createMap(
+      document.getElementById("map"),
+      lat,
+      lng,
+      mapID
+    );
 
     const json = await loadStopsForLocation(lat, lng);
 
@@ -43,12 +44,7 @@
       });
 
       marker.addListener('click', () => {
-        const bubble = new InfoWindow();
-        bubble.setContent(s.name);
-        bubble.open({
-          anchor: marker,
-          map: map,
-        });
+        alert("Clicked on " + s.name);
       });
     }
   }
