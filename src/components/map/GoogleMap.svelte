@@ -35,12 +35,12 @@
     );
 
     const json = await loadStopsForLocation(lat, lng);
-    const stops = json.data.list.map((s) => {return {id: s.id, lat: s.lat, lng: s.lon, name: s.name}});
+    const stops = json.data.list;
 
     for (const s of stops) {
       const marker = new AdvancedMarkerElement({
         map: map,
-        position: {lat: s.lat, lng: s.lng},
+        position: {lat: s.lat, lng: s.lon},
         title: s.name,
       });
 
