@@ -11,7 +11,7 @@ export function loadGoogleMapsLibrary(apiKey) {
 }
 
 export async function createMap(element, lat, lng, mapID) {
-  const { Map } = await google.maps.importLibrary("maps");
+  const { Map } = await window.google.maps.importLibrary("maps");
   return new Map(element, {
     center: { lat: parseFloat(lat), lng: parseFloat(lng) },
     zoom: 12,

@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import {
     PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
     PUBLIC_OBA_GOOGLE_MAPS_MAP_ID as mapID,
@@ -11,6 +11,8 @@
     createMap,
     loadGoogleMapsLibrary
   } from "$lib/googleMaps";
+
+  const dispatch = createEventDispatcher();
 
   let map = null;
 
@@ -33,7 +35,6 @@
     );
 
     const json = await loadStopsForLocation(lat, lng);
-
     const stops = json.data.list.map((s) => {return {id: s.id, lat: s.lat, lng: s.lon, name: s.name}});
 
     for (const s of stops) {
@@ -44,7 +45,9 @@
       });
 
       marker.addListener('click', () => {
-        alert("Clicked on " + s.name);
+        dispatch('stopSelected', {
+          stop: s
+        });
       });
     }
   }
