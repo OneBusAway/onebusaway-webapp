@@ -1,4 +1,3 @@
-
 /**
  * Loads the Google Maps JavaScript library.
  * @param {string} apiKey - The API key for accessing the Google Maps API.
@@ -24,4 +23,12 @@ export async function createMap({element, lat, lng, mapID, ...rest} = {}) {
   };
 
   return new Map(element, params);
+}
+
+export function buildBusIconSVGElement() {
+  return null;
+  // const dom = new JSDOM();
+  // const document = dom.window.document;
+  // const parser = new dom.window.DOMParser();
+  // return parser.parseFromString(busIcon, 'image/svg+xml').documentElement;
 }

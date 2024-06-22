@@ -12,6 +12,8 @@
     loadGoogleMapsLibrary
   } from "$lib/googleMaps";
 
+  import busIcon from "$images/modes/bus.svg"
+
   const dispatch = createEventDispatcher();
 
   let map = null;
@@ -25,7 +27,7 @@
   }
 
   async function initMap() {
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
     const element = document.getElementById("map");
     map = await createMap({element, lat, lng, mapID});
 
@@ -33,16 +35,19 @@
     const stops = json.data.list;
 
     for (const s of stops) {
+      const glyphImg = document.createElement("img");
+      glyphImg.src = busIcon;
+      const glyphSvgPinElement = new PinElement({glyph: glyphImg});
+
       const marker = new AdvancedMarkerElement({
         map: map,
         position: {lat: s.lat, lng: s.lon},
         title: s.name,
+        content: glyphSvgPinElement.element,
       });
 
       marker.addListener('click', () => {
-        dispatch('stopSelected', {
-          stop: s
-        });
+        dispatch('stopSelected', { stop: s });
       });
     }
   }
