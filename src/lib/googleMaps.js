@@ -10,11 +10,18 @@ export function loadGoogleMapsLibrary(apiKey) {
   });
 }
 
-export async function createMap(element, lat, lng, mapID) {
+export async function createMap({element, lat, lng, mapID, ...rest} = {}) {
   const { Map } = await window.google.maps.importLibrary("maps");
-  return new Map(element, {
+
+  let params = {
     center: { lat: parseFloat(lat), lng: parseFloat(lng) },
-    zoom: 12,
-    mapId: mapID
-  });
+    zoom: 15,
+    mapId: mapID,
+    clickableIcons: false,
+    disableDefaultUI: true,
+    zoomControl: true,
+    ...rest
+  };
+
+  return new Map(element, params);
 }

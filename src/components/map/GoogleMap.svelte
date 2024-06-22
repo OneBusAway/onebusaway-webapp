@@ -26,13 +26,8 @@
 
   async function initMap() {
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-
-    map = await createMap(
-      document.getElementById("map"),
-      lat,
-      lng,
-      mapID
-    );
+    const element = document.getElementById("map");
+    map = await createMap({element, lat, lng, mapID});
 
     const json = await loadStopsForLocation(lat, lng);
     const stops = json.data.list;
