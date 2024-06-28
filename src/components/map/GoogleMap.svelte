@@ -1,5 +1,6 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import {
     PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
     PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
@@ -8,7 +9,8 @@
 
   import {
     createMap,
-    loadGoogleMapsLibrary
+    loadGoogleMapsLibrary,
+    nightModeStyles 
   } from "$lib/googleMaps";
 
   import {
@@ -44,6 +46,10 @@
 
     map.addListener('dragend', debouncedLoadMarkers);
     map.addListener('zoom_changed', debouncedLoadMarkers);
+
+    if(browser) {
+      window.addEventListener('themeChange', handleThemeChange);
+    }
   }
 
   async function loadStopsAndAddMarkers(lat, lng) {
@@ -81,9 +87,21 @@
     markers.push({ s, marker });
   }
 
+  function handleThemeChange(event) {
+    const { darkMode } = event.detail;
+    const styles = darkMode ? nightModeStyles() : null;
+    map.setOptions({ styles });
+  }
+
   onMount(async () => {
     loadGoogleMapsLibrary(apiKey);
     await initMap();
+  });
+
+  onDestroy(() => {
+    if(browser) {
+      window.removeEventListener('themeChange', handleThemeChange);
+    }
   });
 </script>
 
