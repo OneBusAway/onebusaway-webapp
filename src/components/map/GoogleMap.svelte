@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import {
     PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
-    PUBLIC_OBA_GOOGLE_MAPS_MAP_ID as mapID,
     PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
     PUBLIC_OBA_REGION_CENTER_LNG as initialLng
   } from '$env/static/public';
@@ -11,6 +10,10 @@
     createMap,
     loadGoogleMapsLibrary
   } from "$lib/googleMaps";
+
+  import {
+    debounce
+  } from "$lib/utils";
 
   import busIcon from "$images/modes/bus.svg";
 
@@ -30,7 +33,7 @@
 
   async function initMap() {
     const element = document.getElementById("map");
-    map = await createMap({ element, lat: initialLat, lng: initialLng, mapID });
+    map = await createMap({ element, lat: initialLat, lng: initialLng });
 
     await loadStopsAndAddMarkers(initialLat, initialLng);
 
@@ -44,15 +47,15 @@
   }
 
   async function loadStopsAndAddMarkers(lat, lng) {
-    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-
     const json = await loadStopsForLocation(lat, lng);
     const stops = json.data.list;
 
     for (const s of stops) {
-      if (!markerExists(s)) {
-        addMarker(s, AdvancedMarkerElement, PinElement);
+      if (markerExists(s)) {
+        continue;
       }
+
+      addMarker(s);
     }
   }
 
@@ -60,17 +63,15 @@
     return markers.some(marker => marker.s.id === s.id);
   }
 
-  function addMarker(s, AdvancedMarkerElement, PinElement) {
+  function addMarker(s) {
     const glyphImg = document.createElement("img");
     glyphImg.src = busIcon;
 
-    const glyphSvgPinElement = new PinElement({ glyph: glyphImg });
-
-    const marker = new AdvancedMarkerElement({
-      map,
+    const marker = new google.maps.Marker({
+      map: map,
       position: { lat: s.lat, lng: s.lon },
-      title: s.name,
-      content: glyphSvgPinElement.element,
+      // icon: 'path/to/custom-icon.png',
+      title: s.name
     });
 
     marker.addListener('click', () => {
@@ -78,15 +79,6 @@
     });
 
     markers.push({ s, marker });
-  }
-
-  function debounce(func, wait) {
-    let timeout;
-
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
   }
 
   onMount(async () => {
