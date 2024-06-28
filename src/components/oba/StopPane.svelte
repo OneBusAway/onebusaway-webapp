@@ -43,25 +43,25 @@
 {/if}
 
 {#if arrivalsAndDepartures}
-	<div class="bg-[#F3F2F8] p-4">
+	<div class="bg-[#F3F2F8] dark:bg-black p-6 rounded-lg">
 		<div class="relative">
 			<div class="p-4 h-36 bg-[#1C1C1E] bg-opacity-80 rounded-lg">
 				<h1 class="text-xl font-semibold text-white">{stop.name}</h1>
 				<h1 class="text-lg text-white">Stop #{stop.name}</h1>
 				<h1 class="text-lg text-white">Routes: {stop.name}</h1>
 			</div>
-			<div class="absolute -top-6 -right-5">
+			<div class="absolute -top-6 -right-4">
 				<button type="button" on:click={closePane}>
-					<FontAwesomeIcon icon={faX} />
+					<FontAwesomeIcon icon={faX} class="text-black dark:text-white" />
 					<span class="sr-only">Close</span>
 				</button>
 			</div>
 		</div>
 		<div>
-			<h3 class="ml-7 mt-2 mb-1 text-xl font-semibold text-[#86858B] uppercase">Arrivals and Departures</h3>
+			<h3 class="ml-7 mt-4 mb-1 text-xl font-semibold text-[#86858B] uppercase">Arrivals and Departures</h3>
 		</div>
-		<div class="h-96 space-y-2 overflow-y-scroll scrollbar-hidden">
-			<div class="-space-y-3">
+		<div class="rounded-lg h-96 space-y-2 overflow-y-scroll scrollbar-hidden">
+			<div class="">
 				{#each arrivalsAndDepartures.arrivalsAndDepartures as arrival}
 					<ArrivalDeparture
 						routeShortName={arrival.routeShortName}

@@ -9,10 +9,8 @@
 		? document.documentElement.classList.add('dark')
 		: document.documentElement.classList.remove('dark');
   
-	  // Store the preference in localStorage
 	  localStorage.theme = darkMode ? 'dark' : 'light';
   
-	  // Dispatch an event to inform other components of the theme change
 	  const event = new CustomEvent('themeChange', { detail: { darkMode } });
 	  window.dispatchEvent(event);
 	}

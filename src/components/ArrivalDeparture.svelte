@@ -41,10 +41,10 @@
 
 </script>
 
-<div class="h-auto rounded-lg bg-[#ffffff] p-4 flex items-center justify-between">
+<div class="h-auto bg-[#ffffff] dark:bg-[#1c1c1c] p-4 flex items-center justify-between hover:cursor-pointer hover:dark:bg-[#363636] hover:bg-[#e3e3e3] border-b-[1px] dark:border-[#313135] border-[#C6C6C8]">
     <div class="flex flex-col gap-1">
-        <p class="text-xl font-semibold text-black">{routeShortName} - {tripHeadsign}</p>
-        <p class="font-semibold text-black">
+        <p class="text-xl font-semibold text-black dark:text-white">{routeShortName} - {tripHeadsign}</p>
+        <p class="font-semibold text-black dark:text-white">
             <span class="text-md">{formatTime(scheduledArrivalTime)}</span> - 
             <span class="{getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).color}">
                 {getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).text}
@@ -52,6 +52,6 @@
         </p>
     </div>
     <div>
-        <p class="text-lg font-semibold text-black">{calculateTimeToReach(predictedArrivalTime, scheduledArrivalTime)}</p>
+        <p class="text-lg font-semibold text-black dark:text-white">{calculateTimeToReach(predictedArrivalTime, scheduledArrivalTime)}</p>
     </div>
 </div>
