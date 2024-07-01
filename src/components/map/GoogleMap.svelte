@@ -90,11 +90,11 @@
 		loadGoogleMapsLibrary(apiKey);
 		await initMap();
 
-    if (browser) {
-      const darkMode = document.documentElement.classList.contains('dark');
-      const event = new CustomEvent('themeChange', { detail: { darkMode } });
-      window.dispatchEvent(event);
-    }
+		if (browser) {
+			const darkMode = document.documentElement.classList.contains('dark');
+			const event = new CustomEvent('themeChange', { detail: { darkMode } });
+			window.dispatchEvent(event);
+		}
 	});
 
 	onDestroy(() => {
