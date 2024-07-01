@@ -26,6 +26,9 @@
 		document.documentElement.classList.remove('dark');
 		darkMode = false;
 	  }
+
+	const event = new CustomEvent('themeChange', { detail: { darkMode } });
+    window.dispatchEvent(event);
 	}
   </script>
   

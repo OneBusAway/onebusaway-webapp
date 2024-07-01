@@ -55,10 +55,6 @@ export async function createMap({ element, lat, lng, ...rest } = {}) {
 		...rest
 	};
 
-	if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-		params.styles = nightModeStyles();
-	}
-
 	return new Map(element, params);
 }
 
