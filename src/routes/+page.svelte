@@ -16,7 +16,7 @@
 
 {#if stop}
     <div
-        class="absolute bottom-0 left-0 bg-white p-4 shadow-lg z-40 w-full md:max-w-prose"
+        class="absolute bottom-0 left-0 bg-transparent px-2 shadow-lg z-40 w-full md:max-w-prose"
         in:fly={{ y: 200, duration: 500 }}
         out:fly={{ y: 200, duration: 500 }}>
         <StopPane {stop} on:closePane={closePane} />

@@ -1,105 +1,114 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
-  import {
-    PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
-    PUBLIC_OBA_GOOGLE_MAPS_MAP_ID as mapID,
-    PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
-    PUBLIC_OBA_REGION_CENTER_LNG as initialLng
-  } from '$env/static/public';
+	import { browser } from '$app/environment';
+	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+	import {
+		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
+		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
+		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
+	} from '$env/static/public';
 
-  import {
-    createMap,
-    loadGoogleMapsLibrary
-  } from "$lib/googleMaps";
+	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 
-  import busIcon from "$images/modes/bus.svg";
+	import { debounce } from '$lib/utils';
 
-  const dispatch = createEventDispatcher();
+	import busIcon from '$images/modes/bus.svg';
 
-  let map = null;
+	const dispatch = createEventDispatcher();
 
-  let markers = [];
+	let map = null;
+	let markers = [];
 
-  async function loadStopsForLocation(lat, lng) {
-    const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch locations');
-    }
-    return await response.json();
-  }
+	async function loadStopsForLocation(lat, lng) {
+		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
+		if (!response.ok) {
+			throw new Error('Failed to fetch locations');
+		}
+		return await response.json();
+	}
 
-  async function initMap() {
-    const element = document.getElementById("map");
-    map = await createMap({ element, lat: initialLat, lng: initialLng, mapID });
+	async function initMap() {
+		const element = document.getElementById('map');
+		map = await createMap({ element, lat: initialLat, lng: initialLng });
 
-    await loadStopsAndAddMarkers(initialLat, initialLng);
+		await loadStopsAndAddMarkers(initialLat, initialLng);
 
-    const debouncedLoadMarkers = debounce(async () => {
-      const center = map.getCenter();
-      await loadStopsAndAddMarkers(center.lat(), center.lng());
-    }, 300);
+		const debouncedLoadMarkers = debounce(async () => {
+			const center = map.getCenter();
+			await loadStopsAndAddMarkers(center.lat(), center.lng());
+		}, 300);
 
-    map.addListener('dragend', debouncedLoadMarkers);
-    map.addListener('zoom_changed', debouncedLoadMarkers);
-  }
+		map.addListener('dragend', debouncedLoadMarkers);
+		map.addListener('zoom_changed', debouncedLoadMarkers);
 
-  async function loadStopsAndAddMarkers(lat, lng) {
-    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+		if (browser) {
+			window.addEventListener('themeChange', handleThemeChange);
+		}
+	}
 
-    const json = await loadStopsForLocation(lat, lng);
-    const stops = json.data.list;
+	async function loadStopsAndAddMarkers(lat, lng) {
+		const json = await loadStopsForLocation(lat, lng);
+		const stops = json.data.list;
 
-    for (const s of stops) {
-      if (!markerExists(s)) {
-        addMarker(s, AdvancedMarkerElement, PinElement);
-      }
-    }
-  }
+		for (const s of stops) {
+			if (markerExists(s)) {
+				continue;
+			}
 
-  function markerExists(s) {
-    return markers.some(marker => marker.s.id === s.id);
-  }
+			addMarker(s);
+		}
+	}
 
-  function addMarker(s, AdvancedMarkerElement, PinElement) {
-    const glyphImg = document.createElement("img");
-    glyphImg.src = busIcon;
+	function markerExists(s) {
+		return markers.some((marker) => marker.s.id === s.id);
+	}
 
-    const glyphSvgPinElement = new PinElement({ glyph: glyphImg });
+	function addMarker(s) {
+		const glyphImg = document.createElement('img');
+		glyphImg.src = busIcon;
 
-    const marker = new AdvancedMarkerElement({
-      map,
-      position: { lat: s.lat, lng: s.lon },
-      title: s.name,
-      content: glyphSvgPinElement.element,
-    });
+		const marker = new google.maps.Marker({
+			map: map,
+			position: { lat: s.lat, lng: s.lon },
+			// icon: 'path/to/custom-icon.png',
+			title: s.name
+		});
 
-    marker.addListener('click', () => {
-      dispatch('stopSelected', { stop: s });
-    });
+		marker.addListener('click', () => {
+			dispatch('stopSelected', { stop: s });
+		});
 
-    markers.push({ s, marker });
-  }
+		markers.push({ s, marker });
+	}
 
-  function debounce(func, wait) {
-    let timeout;
+	function handleThemeChange(event) {
+		const { darkMode } = event.detail;
+		const styles = darkMode ? nightModeStyles() : null;
+		map.setOptions({ styles });
+	}
 
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
+	onMount(async () => {
+		loadGoogleMapsLibrary(apiKey);
+		await initMap();
 
-  onMount(async () => {
-    loadGoogleMapsLibrary(apiKey);
-    await initMap();
-  });
+		if (browser) {
+			const darkMode = document.documentElement.classList.contains('dark');
+			const event = new CustomEvent('themeChange', { detail: { darkMode } });
+			window.dispatchEvent(event);
+		}
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('themeChange', handleThemeChange);
+		}
+	});
 </script>
 
 <div id="map"></div>
 
 <style>
-  #map {
-    height: 100vh;
-    width: 100%;
-  }
+	#map {
+		height: 100vh;
+		width: 100%;
+	}
 </style>
