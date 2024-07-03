@@ -35,7 +35,9 @@
 
 <div class="relative rounded-lg bg-[#F3F2F8] p-6 dark:bg-black">
 	{#if loading}
-		<div class="absolute inset-0 z-10 flex items-center justify-center bg-[#1C1C1E] bg-opacity-80 rounded-lg">
+		<div
+			class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-[#1C1C1E] bg-opacity-80"
+		>
 			<div class="flex items-center text-white">
 				<svg
 					class="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
