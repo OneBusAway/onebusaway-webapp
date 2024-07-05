@@ -44,6 +44,43 @@
 		if (browser) {
 			window.addEventListener('themeChange', handleThemeChange);
 		}
+
+		const locationButton = document.createElement('button');
+
+		locationButton.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+		locationButton.classList.add('custom-map-control-button');
+		document.getElementById('map').appendChild(locationButton);
+
+		locationButton.addEventListener('click', () => {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const { latitude, longitude } = position.coords;
+						const userLocation = new google.maps.LatLng(latitude, longitude);
+						map.setCenter(userLocation);
+
+						new google.maps.Marker({
+							map: map,
+							position: userLocation,
+							title: 'Your Location',
+							icon: {
+								path: google.maps.SymbolPath.CIRCLE,
+								scale: 8,
+								fillColor: '#007BFF',
+								fillOpacity: 1,
+								strokeWeight: 2,
+								strokeColor: '#FFFFFF'
+							}
+						});
+					},
+					() => {
+						alert('Unable to retrieve your location.');
+					}
+				);
+			} else {
+				alert('Geolocation is not supported by this browser.');
+			}
+		});
 	}
 
 	async function loadStopsAndAddMarkers(lat, lng) {
@@ -104,6 +141,10 @@
 	});
 </script>
 
+<link
+	rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
 <div id="map"></div>
 
 <style>
