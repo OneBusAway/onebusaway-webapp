@@ -1,4 +1,5 @@
 <script>
+	/* global google */
 	import { browser } from '$app/environment';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import {
