@@ -2,6 +2,7 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faX } from '@fortawesome/free-solid-svg-icons';
 	import { createEventDispatcher } from 'svelte';
+	import { keybinding } from '$lib/keybinding';
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
 
 	export let stop;
@@ -71,7 +72,7 @@
 					<h1 class="text-lg text-white">Routes: {stop.name}</h1>
 				</div>
 				<div class="absolute -right-4 -top-6">
-					<button type="button" on:click={closePane}>
+					<button type="button" on:click={closePane} use:keybinding={{ code: 'Escape' }}>
 						<FontAwesomeIcon icon={faX} class="text-black dark:text-white" />
 						<span class="sr-only">Close</span>
 					</button>
