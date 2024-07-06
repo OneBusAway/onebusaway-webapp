@@ -1,4 +1,5 @@
 <script>
+	/* global google */
 	import { browser } from '$app/environment';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import {
@@ -8,6 +9,7 @@
 	} from '$env/static/public';
 
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
+	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 
 	import { debounce } from '$lib/utils';
 
@@ -87,6 +89,26 @@
 		map.setOptions({ styles });
 	}
 
+	function handleLocationObtained(event) {
+		const { latitude, longitude } = event.detail;
+		const userLocation = new google.maps.LatLng(latitude, longitude);
+		map.setCenter(userLocation);
+
+		new google.maps.Marker({
+			map: map,
+			position: userLocation,
+			title: 'Your Location',
+			icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				scale: 8,
+				fillColor: '#007BFF',
+				fillOpacity: 1,
+				strokeWeight: 2,
+				strokeColor: '#FFFFFF'
+			}
+		});
+	}
+
 	onMount(async () => {
 		loadGoogleMapsLibrary(apiKey);
 		await initMap();
@@ -105,6 +127,7 @@
 </script>
 
 <div id="map"></div>
+<LocationButton on:locationObtained={handleLocationObtained} />
 
 <style>
 	#map {
