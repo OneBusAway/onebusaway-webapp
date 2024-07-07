@@ -9,7 +9,7 @@
 		"test": "vitest",
 		"lint": "prettier --check . && eslint .",
 		"lint:prettier": "prettier --check .",
-    	"lint:eslint": "eslint .",
+		"lint:eslint": "eslint .",
 		"format": "prettier --write ."
 	},
 	"devDependencies": {

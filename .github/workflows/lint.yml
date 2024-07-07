@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Cache npm install artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
@@ -40,7 +40,7 @@ jobs:
         run: npm run lint:eslint
         env:
           CI: true
-          
+
       - name: Display Prettier and ESLint Issues
         if: failure()
         run: |
