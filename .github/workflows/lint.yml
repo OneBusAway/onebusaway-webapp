@@ -40,3 +40,10 @@ jobs:
         run: npm run lint:eslint
         env:
           CI: true
+          
+      - name: Display Prettier and ESLint Issues
+        if: failure()
+        run: |
+          echo "Prettier and ESLint found issues in the following files:"
+          cat /home/runner/.npm/_logs/*.log
+        continue-on-error: true
