@@ -15,6 +15,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache npm install artifacts
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,5 +31,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run lint
-        run: npm run lint
+      - name: Run Prettier
+        run: npm run lint:prettier
+        env:
+          CI: true
+
+      - name: Run ESLint
+        run: npm run lint:eslint
+        env:
+          CI: true
+
+      - name: Display Prettier and ESLint Issues
+        if: failure()
+        run: |
+          echo "Prettier and ESLint found issues in the following files:"
+          cat /home/runner/.npm/_logs/*.log
+        continue-on-error: true
