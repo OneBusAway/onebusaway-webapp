@@ -15,7 +15,7 @@
 }
 
 .custom-marker:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .bus-icon {
@@ -71,6 +71,7 @@
 	@apply dark:border-[#ccc];
 }
 
-.bus-icon, .direction-arrow {
+.bus-icon,
+.direction-arrow {
 	@apply dark:text-[#fff];
 }
