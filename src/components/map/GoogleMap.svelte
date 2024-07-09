@@ -13,7 +13,8 @@
 
 	import { debounce } from '$lib/utils';
 
-	import busIcon from '$images/modes/bus.svg';
+	import { faBus, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	const dispatch = createEventDispatcher();
 
@@ -66,21 +67,65 @@
 	}
 
 	function addMarker(s) {
-		const glyphImg = document.createElement('img');
-		glyphImg.src = busIcon;
+		const markerElement = document.createElement('div');
+		markerElement.className = 'custom-marker';
+
+		const busIcon = document.createElement('span');
+		busIcon.className = 'bus-icon';
+		new FontAwesomeIcon({
+			target: busIcon,
+			props: {
+				icon: faBus
+			}
+		});
+
+		markerElement.appendChild(busIcon);
+
+		if (s.direction) {
+			const directionArrow = document.createElement('span');
+			directionArrow.className = `direction-arrow ${s.direction.toLowerCase()}`;
+			new FontAwesomeIcon({
+				target: directionArrow,
+				props: {
+					icon: faCaretUp
+				}
+			});
+			markerElement.appendChild(directionArrow);
+		}
+
+		markerElement.addEventListener('click', () => {
+			dispatch('stopSelected', { stop: s });
+		});
 
 		const marker = new window.google.maps.Marker({
 			map: map,
 			position: { lat: s.lat, lng: s.lon },
-			// icon: 'path/to/custom-icon.png',
-			title: s.name
+			icon: {
+				url:
+					'data:image/svg+xml;charset=UTF-8,' +
+					encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+				anchor: new google.maps.Point(0, 0),
+				scaledSize: new google.maps.Size(1, 1)
+			},
+			label: {
+				text: ' ',
+				fontSize: '0px'
+			},
+			optimized: false
 		});
 
-		marker.addListener('click', () => {
-			dispatch('stopSelected', { stop: s });
-		});
+		const overlay = new google.maps.OverlayView();
+		overlay.setMap(map);
+		overlay.draw = function () {
+			const projection = this.getProjection();
+			const position = projection.fromLatLngToDivPixel(marker.getPosition());
+			markerElement.style.left = position.x - 20 + 'px';
+			markerElement.style.top = position.y - 20 + 'px';
+			markerElement.style.position = 'absolute';
+			this.getPanes().overlayMouseTarget.appendChild(markerElement);
+		};
 
-		markers.push({ s, marker });
+		markers.push({ s, marker, overlay, element: markerElement });
 	}
 
 	function handleThemeChange(event) {
@@ -123,6 +168,13 @@
 		if (browser) {
 			window.removeEventListener('themeChange', handleThemeChange);
 		}
+		markers.forEach(({ marker, overlay, element }) => {
+			marker.setMap(null);
+			overlay.setMap(null);
+			if (element && element.parentNode) {
+				element.parentNode.removeChild(element);
+			}
+		});
 	});
 </script>
 
