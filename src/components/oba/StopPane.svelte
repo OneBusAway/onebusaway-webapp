@@ -1,20 +1,11 @@
 <script>
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faX } from '@fortawesome/free-solid-svg-icons';
-	import { createEventDispatcher } from 'svelte';
-	import { keybinding } from '$lib/keybinding';
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
 
 	export let stop;
 	let arrivalsAndDepartures;
 	let loading = false;
 	let error;
-
-	const dispatch = createEventDispatcher();
-
-	function closePane() {
-		dispatch('closePane');
-	}
+	let routeShortNames = null;
 
 	async function loadData(stopID) {
 		loading = true;
@@ -22,6 +13,10 @@
 		if (response.ok) {
 			const json = await response.json();
 			arrivalsAndDepartures = json.data.entry;
+			routeShortNames = json.data.references.routes
+				.filter((r) => stop.routeIds.includes(r.id))
+				.map((r) => r.nullSafeShortName)
+				.sort();
 		} else {
 			error = 'Unable to fetch arrival/departure data';
 		}
@@ -34,7 +29,7 @@
 	})(stop);
 </script>
 
-<div class="relative rounded-lg bg-[#F3F2F8] p-6 dark:bg-black">
+<div>
 	{#if loading}
 		<div
 			class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-[#1C1C1E] bg-opacity-80"
@@ -65,17 +60,13 @@
 
 	{#if arrivalsAndDepartures}
 		<div>
-			<div class="relative">
+			<div>
 				<div class="h-36 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
 					<h1 class="text-xl font-semibold text-white">{stop.name}</h1>
-					<h1 class="text-lg text-white">Stop #{stop.name}</h1>
-					<h1 class="text-lg text-white">Routes: {stop.name}</h1>
-				</div>
-				<div class="absolute -right-4 -top-6">
-					<button type="button" on:click={closePane} use:keybinding={{ code: 'Escape' }}>
-						<FontAwesomeIcon icon={faX} class="text-black dark:text-white" />
-						<span class="sr-only">Close</span>
-					</button>
+					<h1 class="text-lg text-white">Stop #{stop.id}</h1>
+					{#if routeShortNames}
+						<h1 class="text-lg text-white">Routes: {routeShortNames.join(', ')}</h1>
+					{/if}
 				</div>
 			</div>
 			<div>
