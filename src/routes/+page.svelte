@@ -1,6 +1,6 @@
 <script>
-	import { fly } from 'svelte/transition';
 	import GoogleMap from '../components/map/GoogleMap.svelte';
+	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
 
 	let stop;
@@ -15,13 +15,9 @@
 </script>
 
 {#if stop}
-	<div
-		class="absolute bottom-0 left-0 z-40 w-full bg-transparent px-2 shadow-lg md:max-w-prose"
-		in:fly={{ y: 200, duration: 500 }}
-		out:fly={{ y: 200, duration: 500 }}
-	>
-		<StopPane {stop} on:closePane={closePane} />
-	</div>
+	<ModalPane on:close={closePane}>
+		<StopPane {stop} />
+	</ModalPane>
 {/if}
 
 <GoogleMap on:stopSelected={stopSelected} />
