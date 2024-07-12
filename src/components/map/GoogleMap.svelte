@@ -10,11 +10,9 @@
 
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
+	import StopMarker from './StopMarker.svelte';
 
 	import { debounce } from '$lib/utils';
-
-	import { faBus, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	const dispatch = createEventDispatcher();
 
@@ -67,34 +65,18 @@
 	}
 
 	function addMarker(s) {
-		const markerElement = document.createElement('div');
-		markerElement.className = 'custom-marker';
-
-		const busIcon = document.createElement('span');
-		busIcon.className = 'bus-icon';
-		new FontAwesomeIcon({
-			target: busIcon,
-			props: {
-				icon: faBus
-			}
-		});
-
-		markerElement.appendChild(busIcon);
-
-		if (s.direction) {
-			const directionArrow = document.createElement('span');
-			directionArrow.className = `direction-arrow ${s.direction.toLowerCase()}`;
-			new FontAwesomeIcon({
-				target: directionArrow,
-				props: {
-					icon: faCaretUp
-				}
-			});
-			markerElement.appendChild(directionArrow);
+		const container = document.createElement('div');
+		document.body.appendChild(container);
+		function handleClick() {
+			dispatch('stopSelected', { stop: s });
 		}
 
-		markerElement.addEventListener('click', () => {
-			dispatch('stopSelected', { stop: s });
+		new StopMarker({
+			target: container,
+			props: {
+				stop: s,
+				onClick: handleClick
+			}
 		});
 
 		const marker = new window.google.maps.Marker({
@@ -113,19 +95,17 @@
 			},
 			optimized: false
 		});
-
 		const overlay = new google.maps.OverlayView();
 		overlay.setMap(map);
 		overlay.draw = function () {
 			const projection = this.getProjection();
 			const position = projection.fromLatLngToDivPixel(marker.getPosition());
-			markerElement.style.left = position.x - 20 + 'px';
-			markerElement.style.top = position.y - 20 + 'px';
-			markerElement.style.position = 'absolute';
-			this.getPanes().overlayMouseTarget.appendChild(markerElement);
+			container.style.left = position.x - 20 + 'px';
+			container.style.top = position.y - 20 + 'px';
+			container.style.position = 'absolute';
+			this.getPanes().overlayMouseTarget.appendChild(container);
 		};
-
-		markers.push({ s, marker, overlay, element: markerElement });
+		markers.push({ s, marker, overlay, element: container });
 	}
 
 	function handleThemeChange(event) {
