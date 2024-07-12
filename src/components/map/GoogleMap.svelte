@@ -10,10 +10,9 @@
 
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
+	import StopMarker from './StopMarker.svelte';
 
 	import { debounce } from '$lib/utils';
-
-	import busIcon from '$images/modes/bus.svg';
 
 	const dispatch = createEventDispatcher();
 
@@ -66,21 +65,47 @@
 	}
 
 	function addMarker(s) {
-		const glyphImg = document.createElement('img');
-		glyphImg.src = busIcon;
+		const container = document.createElement('div');
+		document.body.appendChild(container);
+		function handleClick() {
+			dispatch('stopSelected', { stop: s });
+		}
+
+		new StopMarker({
+			target: container,
+			props: {
+				stop: s,
+				onClick: handleClick
+			}
+		});
 
 		const marker = new window.google.maps.Marker({
 			map: map,
 			position: { lat: s.lat, lng: s.lon },
-			// icon: 'path/to/custom-icon.png',
-			title: s.name
+			icon: {
+				url:
+					'data:image/svg+xml;charset=UTF-8,' +
+					encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+				anchor: new google.maps.Point(0, 0),
+				scaledSize: new google.maps.Size(1, 1)
+			},
+			label: {
+				text: ' ',
+				fontSize: '0px'
+			},
+			optimized: false
 		});
-
-		marker.addListener('click', () => {
-			dispatch('stopSelected', { stop: s });
-		});
-
-		markers.push({ s, marker });
+		const overlay = new google.maps.OverlayView();
+		overlay.setMap(map);
+		overlay.draw = function () {
+			const projection = this.getProjection();
+			const position = projection.fromLatLngToDivPixel(marker.getPosition());
+			container.style.left = position.x - 20 + 'px';
+			container.style.top = position.y - 20 + 'px';
+			container.style.position = 'absolute';
+			this.getPanes().overlayMouseTarget.appendChild(container);
+		};
+		markers.push({ s, marker, overlay, element: container });
 	}
 
 	function handleThemeChange(event) {
@@ -123,6 +148,13 @@
 		if (browser) {
 			window.removeEventListener('themeChange', handleThemeChange);
 		}
+		markers.forEach(({ marker, overlay, element }) => {
+			marker.setMap(null);
+			overlay.setMap(null);
+			if (element && element.parentNode) {
+				element.parentNode.removeChild(element);
+			}
+		});
 	});
 </script>
 
