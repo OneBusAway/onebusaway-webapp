@@ -1,12 +1,8 @@
 <script>
 	import { faBus, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-
-	import { createEventDispatcher } from 'svelte';
 	export let stop;
 	export let onClick;
-
-	const dispatch = createEventDispatcher();
 </script>
 
 <button class="custom-marker dark:border-[#5a2c2c]" on:click={onClick}>
