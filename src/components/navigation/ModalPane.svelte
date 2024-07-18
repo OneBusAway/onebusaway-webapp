@@ -4,10 +4,12 @@
 	import { faX } from '@fortawesome/free-solid-svg-icons';
 	import { keybinding } from '$lib/keybinding';
 	import { createEventDispatcher } from 'svelte';
+	import { pushState } from '$app/navigation';
 
 	const dispatch = createEventDispatcher();
 
 	function closePane() {
+		pushState('/');
 		dispatch('close');
 	}
 </script>

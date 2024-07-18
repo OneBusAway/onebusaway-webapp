@@ -7,6 +7,7 @@
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
 		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
 	} from '$env/static/public';
+	import { pushState } from '$app/navigation';
 
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
@@ -68,6 +69,7 @@
 		const container = document.createElement('div');
 		document.body.appendChild(container);
 		function handleClick() {
+			pushState(`/stops/${s.id}`);
 			dispatch('stopSelected', { stop: s });
 		}
 
@@ -156,6 +158,10 @@
 			}
 		});
 	});
+
+	function handleStopSelected(stop) {
+		dispatch('stopSelected', { stop });
+	}
 </script>
 
 <div id="map"></div>
