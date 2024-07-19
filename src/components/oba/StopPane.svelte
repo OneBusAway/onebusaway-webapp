@@ -2,21 +2,17 @@
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
 
 	export let stop;
+	export let arrivalsAndDeparturesResponse = null;
 	let arrivalsAndDepartures;
 	let loading = false;
 	let error;
-	let routeShortNames = null;
 
 	async function loadData(stopID) {
 		loading = true;
 		const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
 		if (response.ok) {
-			const json = await response.json();
-			arrivalsAndDepartures = json.data.entry;
-			routeShortNames = json.data.references.routes
-				.filter((r) => stop.routeIds.includes(r.id))
-				.map((r) => r.nullSafeShortName)
-				.sort();
+			arrivalsAndDeparturesResponse = await response.json();
+			arrivalsAndDepartures = arrivalsAndDeparturesResponse.data.entry;
 		} else {
 			error = 'Unable to fetch arrival/departure data';
 		}
@@ -24,9 +20,27 @@
 		loading = false;
 	}
 
-	$: (async (s) => {
-		await loadData(s.id);
-	})(stop);
+	$: (async (s, arrDep) => {
+		// if the arrivalsAndDeparturesResponse is passed in, use that
+		// instead of loading fresh data.
+		if (arrDep) {
+			arrivalsAndDepartures = arrDep.data.entry;
+		}
+		else {
+			await loadData(s.id);
+		}
+	})(stop, arrivalsAndDeparturesResponse);
+
+	let _routeShortNames = null;
+	function routeShortNames() {
+		if (!_routeShortNames) {
+			_routeShortNames = arrivalsAndDeparturesResponse.data.references.routes
+				.filter((r) => stop.routeIds.includes(r.id))
+				.map((r) => r.nullSafeShortName)
+				.sort();
+		}
+		return _routeShortNames;
+	}
 </script>
 
 <div>
@@ -64,8 +78,8 @@
 				<div class="h-36 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
 					<h1 class="text-xl font-semibold text-white">{stop.name}</h1>
 					<h1 class="text-lg text-white">Stop #{stop.id}</h1>
-					{#if routeShortNames}
-						<h1 class="text-lg text-white">Routes: {routeShortNames.join(', ')}</h1>
+					{#if routeShortNames()}
+						<h1 class="text-lg text-white">Routes: {routeShortNames().join(', ')}</h1>
 					{/if}
 				</div>
 			</div>
