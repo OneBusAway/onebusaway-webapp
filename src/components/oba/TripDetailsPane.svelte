@@ -1,6 +1,6 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { faBus } from '@fortawesome/free-solid-svg-icons';
+	import { faBus, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 	import { faSquare } from '@fortawesome/free-regular-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -13,10 +13,28 @@
 	let error = null;
 	let interval;
 	let currentStopIndex = -1;
+	let busPosition = 0;
 
 	function formatTime(seconds) {
-		const date = new Date(seconds);
+		if (!seconds) return '';
+		const date = new Date(seconds * 1000);
 		return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	}
+
+	function calculateBusPosition() {
+		if (tripDetails && tripDetails.status && tripDetails.status.position) {
+			const { lat, lon } = tripDetails.status.position;
+
+			busPosition = tripDetails.schedule.stopTimes.findIndex((stop, index, array) => {
+				const nextStop = array[index + 1];
+				if (!nextStop) return true;
+				const stopLat = stopInfo[stop.stopId].lat;
+				const stopLon = stopInfo[stop.stopId].lon;
+				const nextStopLat = stopInfo[nextStop.stopId].lat;
+				const nextStopLon = stopInfo[nextStop.stopId].lon;
+				return (lat >= stopLat && lat < nextStopLat) || (lon >= stopLon && lon < nextStopLon);
+			});
+		}
 	}
 
 	async function loadTripDetails() {
@@ -41,17 +59,19 @@
 					}, {});
 				}
 
-				// Update current stop index
 				if (tripDetails.status && tripDetails.status.closestStop) {
 					currentStopIndex = tripDetails.schedule.stopTimes.findIndex(
 						(stop) => stop.stopId === tripDetails.status.closestStop.stopId
 					);
 				}
 
+				calculateBusPosition();
+
 				console.log('Trip details:', tripDetails);
 				console.log('Route info:', routeInfo);
 				console.log('Stop info:', stopInfo);
 				console.log('Current stop index:', currentStopIndex);
+				console.log('Bus position:', busPosition);
 			} else {
 				error = 'Unable to fetch trip details';
 			}
@@ -82,14 +102,20 @@
 		</h2>
 		{#if tripDetails.schedule && tripDetails.schedule.stopTimes && tripDetails.schedule.stopTimes.length > 0}
 			<div class="relative">
-				<div class="absolute bottom-0 left-5 top-0 w-0.5 bg-[#129900]"></div>
+				<div class="absolute bottom-0 left-5 top-0 w-0.5 bg-green-500"></div>
 				{#each tripDetails.schedule.stopTimes as stop, index}
 					<div class="relative mb-4 flex items-center">
 						<div class="relative z-10 flex h-12 w-12 items-center justify-center">
-							<FontAwesomeIcon icon={faSquare} class="text-2xl text-[#129900]" />
-							{#if index === currentStopIndex}
-								<FontAwesomeIcon icon={faBus} class="absolute text-lg text-[#129900]" />
-							{/if}
+							<FontAwesomeIcon
+								icon={faSquare}
+								class="bg-white text-3xl text-green-500 dark:bg-black"
+							/>
+							{#if index === busPosition}
+                                <FontAwesomeIcon icon={faBus} class="bg-white dark:bg-black absolute text-sm text-green-500" />
+                            {/if}
+                            {#if index === currentStopIndex}
+                                <FontAwesomeIcon icon={faLocationDot} class="bg-white dark:bg-black absolute text-sm text-blue-500" />
+                            {/if}
 						</div>
 						<div class="ml-4 flex w-full items-center justify-between">
 							<div class="text-md font-semibold text-[#000000] dark:text-white">
@@ -101,9 +127,9 @@
 				{/each}
 			</div>
 		{:else}
-			<p>No stop times available for this trip.</p>
+			<p class="text-black dark:text-white">No stop times available for this trip.</p>
 		{/if}
 	{:else}
-		<p>Loading trip details...</p>
+		<p class="text-black dark:text-white">Loading trip details...</p>
 	{/if}
 </div>

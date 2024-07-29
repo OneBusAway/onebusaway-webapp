@@ -3,6 +3,7 @@
 	import TripDetailsPane from './TripDetailsPane.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faX, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import { onMount } from 'svelte';
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
@@ -12,6 +13,7 @@
 
 	let showTripDetails = false;
 	let selectedTripDetails = null;
+	let interval;
 
 	async function loadData(stopID) {
 		loading = true;
@@ -35,6 +37,14 @@
 			await loadData(s.id);
 		}
 	})(stop, arrivalsAndDeparturesResponse);
+
+	onMount(() => {
+		interval = setInterval(() => {
+			loadData(stop.id);
+		}, 30000);
+
+		return () => clearInterval(interval);
+	});
 
 	let _routeShortNames = null;
 	function routeShortNames() {
@@ -123,17 +133,17 @@
 
 	{#if showTripDetails}
 		<div class="trip-details-modal scrollbar-hidden">
-			<div class="py-1 text-right">
+			<div class="py-1 text-left">
 				<button type="button" on:click={() => (showTripDetails = false)} class="close-button">
 					<FontAwesomeIcon icon={faArrowLeft} class="font-black text-black dark:text-white" />
-					<span class="sr-only">Back</span>
+					<h1 class="font-semibold text-black dark:text-white">Back to {stop.name}</h1>
 				</button>
 			</div>
 			<div
-				class="flex items-center justify-between border-b-[1px] border-[#C6C6C8] bg-white px-4 py-2 dark:border-[#313135] dark:bg-gray-800"
+				class="flex items-center justify-between rounded-lg bg-[#ffffff] p-4 hover:bg-[#e3e3e3]  dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
 			>
 				<div>
-					<h2 class="text-lg font-semibold">
+					<h2 class="text-lg font-semibold text-black dark:text-white">
 						{selectedTripDetails.routeShortName} - {selectedTripDetails.tripHeadsign}
 					</h2>
 					<p class="text-sm font-semibold text-gray-600 dark:text-gray-400">
@@ -146,7 +156,7 @@
 						</span>
 					</p>
 				</div>
-				<p class={`mt-1 text-sm ${selectedTripDetails.arrivalStatus.color}`}>
+				<p class={`mt-1 text-sm font-semibold ${selectedTripDetails.arrivalStatus.color}`}>
 					{selectedTripDetails.timeToReach}
 				</p>
 			</div>
@@ -170,10 +180,10 @@
 	}
 	.trip-details-modal {
 		@apply absolute bottom-0 left-0 z-40 h-full w-full overflow-y-scroll rounded-lg bg-white px-2 shadow-lg md:max-w-prose;
-		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-white p-4 shadow-lg hover:cursor-pointer dark:bg-black;
+		@apply rounded-lg border-b-[1px] border-[#C6C6C8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 bg-white p-4 shadow-lg dark:bg-black;
 	}
 	.close-button {
-		@apply rounded px-4 py-2;
+		@apply flex items-center gap-2 rounded px-4 py-2;
 		@apply transition duration-300 ease-in-out hover:bg-neutral-200 dark:hover:bg-neutral-200/50;
 	}
 </style>
