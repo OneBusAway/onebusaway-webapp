@@ -5,6 +5,6 @@
 	const arrivalsAndDeparturesResponse = data.arrivalsAndDeparturesResponse;
 </script>
 
-<div class='pt-20 px-8 max-w-5xl mx-auto'>
+<div class="mx-auto max-w-5xl px-8 pt-20">
 	<StopPane {stop} {arrivalsAndDeparturesResponse} />
 </div>
