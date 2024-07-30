@@ -1,8 +1,5 @@
 <script>
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
-	import TripDetailsPane from './TripDetailsPane.svelte';
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faX, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
 	import TripDetailsModal from '../navigation/TripDetailsModal.svelte';
 

@@ -158,10 +158,6 @@
 			}
 		});
 	});
-
-	function handleStopSelected(stop) {
-		dispatch('stopSelected', { stop });
-	}
 </script>
 
 <div id="map"></div>
