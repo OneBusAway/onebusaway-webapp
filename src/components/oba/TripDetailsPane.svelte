@@ -44,37 +44,35 @@
 				url += `&serviceDate=${serviceDate}`;
 			}
 			const response = await fetch(url);
-			if (response.ok) {
-				const data = await response.json();
-				tripDetails = data.data.entry;
 
-				if (data.data.references && data.data.references.routes) {
-					routeInfo = data.data.references.routes.find((route) => route.id === tripDetails.routeId);
-				}
-
-				if (data.data.references && data.data.references.stops) {
-					stopInfo = data.data.references.stops.reduce((acc, stop) => {
-						acc[stop.id] = stop;
-						return acc;
-					}, {});
-				}
-
-				if (tripDetails.status && tripDetails.status.closestStop) {
-					currentStopIndex = tripDetails.schedule.stopTimes.findIndex(
-						(stop) => stop.stopId === tripDetails.status.closestStop.stopId
-					);
-				}
-
-				calculateBusPosition();
-
-				console.log('Trip details:', tripDetails);
-				console.log('Route info:', routeInfo);
-				console.log('Stop info:', stopInfo);
-				console.log('Current stop index:', currentStopIndex);
-				console.log('Bus position:', busPosition);
-			} else {
+			if (!response) {
 				error = 'Unable to fetch trip details';
+				return;
 			}
+
+			const jsonBody = await response.json();
+			const data = jsonBody.data;
+
+			tripDetails = data.entry;
+
+			if (data?.references?.routes) {
+				routeInfo = data.references.routes.find((route) => route.id === tripDetails.routeId);
+			}
+
+			if (data?.references?.stops) {
+				stopInfo = data.references.stops.reduce((acc, stop) => {
+					acc[stop.id] = stop;
+					return acc;
+				}, {});
+			}
+
+			if (tripDetails.status?.closestStop) {
+				currentStopIndex = tripDetails.schedule.stopTimes.findIndex(
+					(stop) => stop.stopId === tripDetails.status.closestStop.stopId
+				);
+			}
+
+			calculateBusPosition();
 		} catch (err) {
 			console.error('Error fetching trip details:', err);
 			error = 'Error fetching trip details';
@@ -100,7 +98,7 @@
 				Route {routeInfo.shortName} -
 			{/if}
 		</h2>
-		{#if tripDetails.schedule && tripDetails.schedule.stopTimes && tripDetails.schedule.stopTimes.length > 0}
+		{#if tripDetails.schedule?.stopTimes.length > 0}
 			<div class="relative">
 				<div class="absolute bottom-0 left-5 top-0 w-0.5 bg-green-500"></div>
 				{#each tripDetails.schedule.stopTimes as stop, index}
@@ -111,11 +109,17 @@
 								class="bg-white text-3xl text-green-500 dark:bg-black"
 							/>
 							{#if index === busPosition}
-                                <FontAwesomeIcon icon={faBus} class="bg-white dark:bg-black absolute text-sm text-green-500" />
-                            {/if}
-                            {#if index === currentStopIndex}
-                                <FontAwesomeIcon icon={faLocationDot} class="bg-white dark:bg-black absolute text-sm text-blue-500" />
-                            {/if}
+								<FontAwesomeIcon
+									icon={faBus}
+									class="absolute bg-white text-sm text-green-500 dark:bg-black"
+								/>
+							{/if}
+							{#if index === currentStopIndex}
+								<FontAwesomeIcon
+									icon={faLocationDot}
+									class="absolute bg-white text-sm text-blue-500 dark:bg-black"
+								/>
+							{/if}
 						</div>
 						<div class="ml-4 flex w-full items-center justify-between">
 							<div class="text-md font-semibold text-[#000000] dark:text-white">

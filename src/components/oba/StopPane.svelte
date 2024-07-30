@@ -4,6 +4,7 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faX, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
+	import TripDetailsModal from '../navigation/TripDetailsModal.svelte';
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
@@ -64,6 +65,9 @@
 			scheduledArrivalTime: event.detail.scheduledArrivalTime
 		};
 		showTripDetails = true;
+	}
+	function handleCloseTripDetailModal() {
+		showTripDetails = false;
 	}
 </script>
 
@@ -132,42 +136,7 @@
 	{/if}
 
 	{#if showTripDetails}
-		<div class="trip-details-modal scrollbar-hidden">
-			<div class="py-1 text-left">
-				<button type="button" on:click={() => (showTripDetails = false)} class="close-button">
-					<FontAwesomeIcon icon={faArrowLeft} class="font-black text-black dark:text-white" />
-					<h1 class="font-semibold text-black dark:text-white">Back to {stop.name}</h1>
-				</button>
-			</div>
-			<div
-				class="flex items-center justify-between rounded-lg bg-[#ffffff] p-4 hover:bg-[#e3e3e3]  dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
-			>
-				<div>
-					<h2 class="text-lg font-semibold text-black dark:text-white">
-						{selectedTripDetails.routeShortName} - {selectedTripDetails.tripHeadsign}
-					</h2>
-					<p class="text-sm font-semibold text-gray-600 dark:text-gray-400">
-						{new Date(selectedTripDetails.scheduledArrivalTime).toLocaleTimeString([], {
-							hour: '2-digit',
-							minute: '2-digit'
-						})} -
-						<span class={selectedTripDetails.arrivalStatus.color}>
-							{selectedTripDetails.arrivalStatus.text}
-						</span>
-					</p>
-				</div>
-				<p class={`mt-1 text-sm font-semibold ${selectedTripDetails.arrivalStatus.color}`}>
-					{selectedTripDetails.timeToReach}
-				</p>
-			</div>
-			<div class="px-4 py-2">
-				<TripDetailsPane
-					tripId={selectedTripDetails.tripId}
-					vehicleId={selectedTripDetails.vehicleId}
-					serviceDate={selectedTripDetails.serviceDate}
-				/>
-			</div>
-		</div>
+		<TripDetailsModal {stop} {selectedTripDetails} onClose={handleCloseTripDetailModal} />
 	{/if}
 </div>
 
@@ -177,13 +146,5 @@
 		-ms-overflow-style: none;
 		overflow: -moz-scrollbars-none;
 		-webkit-scrollbar: none;
-	}
-	.trip-details-modal {
-		@apply absolute bottom-0 left-0 z-40 h-full w-full overflow-y-scroll rounded-lg bg-white px-2 shadow-lg md:max-w-prose;
-		@apply rounded-lg border-b-[1px] border-[#C6C6C8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 bg-white p-4 shadow-lg dark:bg-black;
-	}
-	.close-button {
-		@apply flex items-center gap-2 rounded px-4 py-2;
-		@apply transition duration-300 ease-in-out hover:bg-neutral-200 dark:hover:bg-neutral-200/50;
 	}
 </style>
