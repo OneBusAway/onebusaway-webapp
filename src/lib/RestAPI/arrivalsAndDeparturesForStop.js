@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 import { PUBLIC_OBA_SERVER_URL as baseURL } from '$env/static/public';
 import { PRIVATE_OBA_API_KEY as apiKey } from '$env/static/private';
 
-export default async function(stopID) {
+export default async function (stopID) {
 	const apiURL = `${baseURL}/api/where/arrivals-and-departures-for-stop/${stopID}.json?key=${apiKey}`;
 	const response = await fetch(apiURL);
 

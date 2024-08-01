@@ -33,7 +33,7 @@
 <style lang="postcss">
 	.modal-pane {
 		@apply absolute bottom-0 left-0 z-40 w-full bg-transparent px-2 shadow-lg md:max-w-prose;
-		@apply rounded-lg bg-[#F3F2F8] dark:bg-black;
+		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-[#F3F2F8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 dark:bg-black;
 	}
 
 	.close-button {

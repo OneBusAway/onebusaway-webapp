@@ -1,11 +1,17 @@
 <script>
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
+	import { onMount } from 'svelte';
+	import TripDetailsModal from '../navigation/TripDetailsModal.svelte';
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
 	let arrivalsAndDepartures;
 	let loading = false;
 	let error;
+
+	let showTripDetails = false;
+	let selectedTripDetails = null;
+	let interval;
 
 	async function loadData(stopID) {
 		loading = true;
@@ -25,11 +31,18 @@
 		// instead of loading fresh data.
 		if (arrDep) {
 			arrivalsAndDepartures = arrDep.data.entry;
-		}
-		else {
+		} else {
 			await loadData(s.id);
 		}
 	})(stop, arrivalsAndDeparturesResponse);
+
+	onMount(() => {
+		interval = setInterval(() => {
+			loadData(stop.id);
+		}, 30000);
+
+		return () => clearInterval(interval);
+	});
 
 	let _routeShortNames = null;
 	function routeShortNames() {
@@ -40,6 +53,18 @@
 				.sort();
 		}
 		return _routeShortNames;
+	}
+	function handleShowTripDetails(event) {
+		selectedTripDetails = {
+			...event.detail,
+			routeShortName: event.detail.routeShortName,
+			tripHeadsign: event.detail.tripHeadsign,
+			scheduledArrivalTime: event.detail.scheduledArrivalTime
+		};
+		showTripDetails = true;
+	}
+	function handleCloseTripDetailModal() {
+		showTripDetails = false;
 	}
 </script>
 
@@ -96,15 +121,23 @@
 							tripHeadsign={arrival.tripHeadsign}
 							scheduledArrivalTime={arrival.scheduledArrivalTime}
 							predictedArrivalTime={arrival.predictedArrivalTime}
+							tripId={arrival.tripId}
+							vehicleId={arrival.vehicleId}
+							serviceDate={arrival.serviceDate}
+							on:showTripDetails={handleShowTripDetails}
 						/>
 					{/each}
 				</div>
 			</div>
 		</div>
 	{/if}
+
+	{#if showTripDetails}
+		<TripDetailsModal {stop} {selectedTripDetails} onClose={handleCloseTripDetailModal} />
+	{/if}
 </div>
 
-<style>
+<style lang="postcss">
 	.scrollbar-hidden {
 		scrollbar-width: none;
 		-ms-overflow-style: none;

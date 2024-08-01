@@ -3,6 +3,12 @@
 	export let tripHeadsign;
 	export let scheduledArrivalTime;
 	export let predictedArrivalTime;
+	export let tripId;
+	export let vehicleId;
+	export let serviceDate;
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	function formatTime(time) {
 		const date = new Date(time);
@@ -45,10 +51,24 @@
 
 		return `${Math.floor((chosenTime - now) / 60000)}m`;
 	}
+
+	function handleTripDetail() {
+		dispatch('showTripDetails', {
+			tripId,
+			vehicleId,
+			serviceDate,
+			routeShortName,
+			tripHeadsign,
+			scheduledArrivalTime,
+			timeToReach: calculateTimeToReach(predictedArrivalTime, scheduledArrivalTime),
+			arrivalStatus: getArrivalStatus(predictedArrivalTime, scheduledArrivalTime)
+		});
+	}
 </script>
 
-<div
-	class="flex h-auto items-center justify-between border-b-[1px] border-[#C6C6C8] bg-[#ffffff] p-4 hover:cursor-pointer hover:bg-[#e3e3e3] dark:border-[#313135] dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
+<button
+	on:click={handleTripDetail}
+	class="flex h-auto w-full items-center justify-between border-b-[1px] border-[#C6C6C8] bg-[#ffffff] p-4 hover:cursor-pointer hover:bg-[#e3e3e3] dark:border-[#313135] dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
 >
 	<div class="flex flex-col gap-1">
 		<p class="text-xl font-semibold text-black dark:text-white">
@@ -66,4 +86,4 @@
 			{calculateTimeToReach(predictedArrivalTime, scheduledArrivalTime)}
 		</p>
 	</div>
-</div>
+</button>
