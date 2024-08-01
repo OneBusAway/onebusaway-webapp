@@ -45,7 +45,7 @@
 			}
 			const response = await fetch(url);
 
-			if (!response) {
+			if (!response.ok) {
 				error = 'Unable to fetch trip details';
 				return;
 			}
@@ -68,9 +68,14 @@
 
 			if (tripDetails.status?.closestStop) {
 				currentStopIndex = tripDetails.schedule.stopTimes.findIndex(
-					(stop) => stop.stopId === tripDetails.status.closestStop.stopId
+					(stop) => stop.stopId === tripDetails.status.closestStop
 				);
+			} else {
+				currentStopIndex = -1;
 			}
+
+			console.log('Current Stop Index:', currentStopIndex);
+			console.log('Closest Stop:', tripDetails.status?.closestStop);
 
 			calculateBusPosition();
 		} catch (err) {
