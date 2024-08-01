@@ -1,9 +1,9 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { faBus, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-	import { faSquare } from '@fortawesome/free-regular-svg-icons';
+	import { faBus, faPersonWalking } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
+	export let stop;
 	export let tripId;
 	export let serviceDate = null;
 
@@ -105,32 +105,31 @@
 		</h2>
 		{#if tripDetails.schedule?.stopTimes.length > 0}
 			<div class="relative">
-				<div class="absolute bottom-0 left-5 top-0 w-0.5 bg-green-500"></div>
-				{#each tripDetails.schedule.stopTimes as stop, index}
+				<div class="absolute bottom-0 left-3.5 top-0 w-[1px] bg-neutral-400"></div>
+
+				{#each tripDetails.schedule.stopTimes as tripStop, index}
 					<div class="relative mb-4 flex items-center">
-						<div class="relative z-10 flex h-12 w-12 items-center justify-center">
-							<FontAwesomeIcon
-								icon={faSquare}
-								class="bg-white text-3xl text-green-500 dark:bg-black"
-							/>
+						<div
+							class="relative z-10 flex size-8 items-center justify-center rounded-md border border-neutral-400 bg-white"
+						>
 							{#if index === busPosition}
 								<FontAwesomeIcon
 									icon={faBus}
-									class="absolute bg-white text-sm text-green-500 dark:bg-black"
+									class="absolute bg-white text-sm text-xl text-green-500 dark:bg-black"
 								/>
 							{/if}
-							{#if index === currentStopIndex}
+							{#if tripStop.stopId === stop.id}
 								<FontAwesomeIcon
-									icon={faLocationDot}
-									class="absolute bg-white text-sm text-blue-500 dark:bg-black"
+									icon={faPersonWalking}
+									class="absolute bottom-0 right-0 size-2 rounded-br-md rounded-tl-md border-l border-t bg-neutral-50/80 px-1 py-0.5 text-sm text-blue-500 dark:bg-black"
 								/>
 							{/if}
 						</div>
 						<div class="ml-4 flex w-full items-center justify-between">
 							<div class="text-md font-semibold text-[#000000] dark:text-white">
-								{stopInfo[stop.stopId] ? stopInfo[stop.stopId].name : stop.stopId}
+								{stopInfo[tripStop.stopId] ? stopInfo[tripStop.stopId].name : tripStop.stopId}
 							</div>
-							<div class="text-sm text-[#86858B]">{formatTime(stop.arrivalTime)}</div>
+							<div class="text-sm text-[#86858B]">{formatTime(tripStop.arrivalTime)}</div>
 						</div>
 					</div>
 				{/each}

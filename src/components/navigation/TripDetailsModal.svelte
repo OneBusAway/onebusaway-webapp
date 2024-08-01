@@ -38,8 +38,8 @@
 	</div>
 	<div class="px-4 py-2">
 		<TripDetailsPane
+			{stop}
 			tripId={selectedTripDetails.tripId}
-			vehicleId={selectedTripDetails.vehicleId}
 			serviceDate={selectedTripDetails.serviceDate}
 		/>
 	</div>
