@@ -12,11 +12,12 @@
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
+	import RouteMap from './RouteMap.svelte';
 
 	import { debounce } from '$lib/utils';
 
 	const dispatch = createEventDispatcher();
-
+	
 	let map = null;
 
 	let markers = [];
@@ -161,6 +162,7 @@
 </script>
 
 <div id="map"></div>
+
 <LocationButton on:locationObtained={handleLocationObtained} />
 
 <style>

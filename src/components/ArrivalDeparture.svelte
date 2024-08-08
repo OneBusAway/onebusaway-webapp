@@ -6,6 +6,7 @@
 	export let tripId;
 	export let vehicleId;
 	export let serviceDate;
+	export let shapeId;
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -61,7 +62,8 @@
 			tripHeadsign,
 			scheduledArrivalTime,
 			timeToReach: calculateTimeToReach(predictedArrivalTime, scheduledArrivalTime),
-			arrivalStatus: getArrivalStatus(predictedArrivalTime, scheduledArrivalTime)
+			arrivalStatus: getArrivalStatus(predictedArrivalTime, scheduledArrivalTime),
+			shapeId
 		});
 	}
 </script>
