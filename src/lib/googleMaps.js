@@ -145,3 +145,19 @@ export function nightModeStyles() {
 		}
 	];
 }
+
+export async function drawPolyline(shape, googleMap) {
+	await window.google.maps.importLibrary('geometry');
+	const decodedPath = google.maps.geometry.encoding.decodePath(shape);
+	const path = decodedPath.map(point => ({ lat: point.lat(), lng: point.lng() }));
+
+	const polyline = new window.google.maps.Polyline({
+		path,
+		geodesic: true,
+		strokeColor: '#00FF00',
+		strokeOpacity: 1.0,
+		strokeWeight: 4
+	});
+
+	polyline.setMap(googleMap);
+}

@@ -128,7 +128,6 @@
 							tripId={arrival.tripId}
 							vehicleId={arrival.vehicleId}
 							serviceDate={arrival.serviceDate}
-							shapeId={arrival.shapeId}
 							on:showTripDetails={handleShowTripDetails}
 						/>
 					{/each}

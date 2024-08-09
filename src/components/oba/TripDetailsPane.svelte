@@ -74,9 +74,6 @@
 				currentStopIndex = -1;
 			}
 
-			console.log('Current Stop Index:', currentStopIndex);
-			console.log('Closest Stop:', tripDetails.status?.closestStop);
-
 			calculateBusPosition();
 		} catch (err) {
 			console.error('Error fetching trip details:', err);

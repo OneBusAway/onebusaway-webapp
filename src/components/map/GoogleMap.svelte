@@ -7,17 +7,18 @@
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
 		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
 	} from '$env/static/public';
-	import { pushState } from '$app/navigation';
 
+	import { debounce } from '$lib/utils';
+	import { pushState } from '$app/navigation';
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
 
-	import { debounce } from '$lib/utils';
+	export let selectedTrip;
 
 	const dispatch = createEventDispatcher();
-	
+
 	let map = null;
 
 	let markers = [];
@@ -162,6 +163,10 @@
 </script>
 
 <div id="map"></div>
+
+{#if selectedTrip}
+    <RouteMap map={map} tripId={selectedTrip.tripId} />
+{/if}
 
 <LocationButton on:locationObtained={handleLocationObtained} />
 
