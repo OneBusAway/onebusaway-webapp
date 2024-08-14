@@ -2,6 +2,7 @@
 	import ArrivalDeparture from '../ArrivalDeparture.svelte';
 	import { onMount } from 'svelte';
 	import TripDetailsModal from '../navigation/TripDetailsModal.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
@@ -12,6 +13,8 @@
 	let showTripDetails = false;
 	let selectedTripDetails = null;
 	let interval;
+
+	const dispatch = createEventDispatcher();
 
 	async function loadData(stopID) {
 		loading = true;
@@ -62,6 +65,7 @@
 			scheduledArrivalTime: event.detail.scheduledArrivalTime
 		};
 		showTripDetails = true;
+		dispatch('tripSelected', selectedTripDetails);
 	}
 	function handleCloseTripDetailModal() {
 		showTripDetails = false;

@@ -7,19 +7,24 @@
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
 		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
 	} from '$env/static/public';
-	import { pushState } from '$app/navigation';
 
+	import { debounce } from '$lib/utils';
+	import { pushState } from '$app/navigation';
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
+	import RouteMap from './RouteMap.svelte';
 
-	import { debounce } from '$lib/utils';
+	export let selectedTrip;
+	export let selectedRoute = null;
+	export let showRoute = false;
 
 	const dispatch = createEventDispatcher();
 
 	let map = null;
 
 	let markers = [];
+	let allStops = [];
 
 	async function loadStopsForLocation(lat, lng) {
 		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
@@ -50,19 +55,41 @@
 
 	async function loadStopsAndAddMarkers(lat, lng) {
 		const json = await loadStopsForLocation(lat, lng);
-		const stops = json.data.list;
+		const newStops = json.data.list;
 
-		for (const s of stops) {
-			if (markerExists(s)) {
-				continue;
-			}
+		allStops = [...new Map([...allStops, ...newStops].map((stop) => [stop.id, stop])).values()];
 
-			addMarker(s);
+		clearAllMarkers();
+
+		if (showRoute && selectedRoute) {
+			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
+			stopsToShow.forEach((s) => addMarker(s));
+		} else {
+			newStops.forEach((s) => addMarker(s));
 		}
 	}
 
-	function markerExists(s) {
-		return markers.some((marker) => marker.s.id === s.id);
+	function clearAllMarkers() {
+		markers.forEach(({ marker, overlay, element }) => {
+			marker?.setMap(null);
+
+			if (overlay) {
+				overlay.setMap(null);
+				overlay.draw = () => {};
+				overlay.onRemove?.();
+			}
+			element?.parentNode?.removeChild(element);
+		});
+		markers = [];
+	}
+
+	$: if (selectedRoute && showRoute) {
+		clearAllMarkers();
+		const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
+		stopsToShow.forEach((s) => addMarker(s));
+	} else if (!showRoute || !selectedRoute) {
+		clearAllMarkers();
+		allStops.forEach((s) => addMarker(s));
 	}
 
 	function addMarker(s) {
@@ -107,6 +134,9 @@
 			container.style.position = 'absolute';
 			this.getPanes().overlayMouseTarget.appendChild(container);
 		};
+		overlay.onRemove = function () {
+			container?.parentNode?.removeChild(container);
+		};
 		markers.push({ s, marker, overlay, element: container });
 	}
 
@@ -137,7 +167,9 @@
 	}
 
 	onMount(async () => {
-		loadGoogleMapsLibrary(apiKey);
+		if (!window.google) {
+			loadGoogleMapsLibrary(apiKey);
+		}
 		await initMap();
 		if (browser) {
 			const darkMode = document.documentElement.classList.contains('dark');
@@ -161,6 +193,11 @@
 </script>
 
 <div id="map"></div>
+
+{#if selectedTrip}
+	<RouteMap {map} tripId={selectedTrip.tripId} />
+{/if}
+
 <LocationButton on:locationObtained={handleLocationObtained} />
 
 <style>

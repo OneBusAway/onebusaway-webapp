@@ -12,7 +12,6 @@
 	let stopInfo = {};
 	let error = null;
 	let interval;
-	let currentStopIndex = -1;
 	let busPosition = 0;
 
 	function formatTime(seconds) {
@@ -65,17 +64,6 @@
 					return acc;
 				}, {});
 			}
-
-			if (tripDetails.status?.closestStop) {
-				currentStopIndex = tripDetails.schedule.stopTimes.findIndex(
-					(stop) => stop.stopId === tripDetails.status.closestStop
-				);
-			} else {
-				currentStopIndex = -1;
-			}
-
-			console.log('Current Stop Index:', currentStopIndex);
-			console.log('Closest Stop:', tripDetails.status?.closestStop);
 
 			calculateBusPosition();
 		} catch (err) {
