@@ -66,9 +66,14 @@
 		};
 		showTripDetails = true;
 		dispatch('tripSelected', selectedTripDetails);
+		dispatch('updateRouteMap', { show: true });
+		console.log('StopPane: Trip selected, showing route map');
 	}
+
 	function handleCloseTripDetailModal() {
 		showTripDetails = false;
+		dispatch('tripSelected', null);
+		dispatch('updateRouteMap', { show: false });
 	}
 </script>
 

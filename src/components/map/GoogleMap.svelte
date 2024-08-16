@@ -15,9 +15,10 @@
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
 
-	export let selectedTrip;
+	export let selectedTrip = null;
 	export let selectedRoute = null;
 	export let showRoute = false;
+	export let showRouteMap = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -194,7 +195,7 @@
 
 <div id="map"></div>
 
-{#if selectedTrip}
+{#if selectedTrip && showRouteMap}
 	<RouteMap {map} tripId={selectedTrip.tripId} />
 {/if}
 

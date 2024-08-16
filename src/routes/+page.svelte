@@ -7,6 +7,7 @@
 	let selectedTrip = null;
 	let showRoute = false;
 	let selectedRoute = null;
+	let showRouteMap = false;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -27,12 +28,22 @@
 			shortName: event.detail.routeShortName
 		};
 	}
+
+	function handleUpdateRouteMap(event) {
+		showRouteMap = event.detail.show;
+	}
 </script>
 
 {#if stop}
 	<ModalPane on:close={closePane}>
-		<StopPane {stop} on:tripSelected={tripSelected} />
+		<StopPane {stop} on:tripSelected={tripSelected} on:updateRouteMap={handleUpdateRouteMap} />
 	</ModalPane>
 {/if}
 
-<GoogleMap {selectedTrip} {selectedRoute} on:stopSelected={stopSelected} {showRoute} />
+<GoogleMap
+	{selectedTrip}
+	{selectedRoute}
+	on:stopSelected={stopSelected}
+	{showRoute}
+	{showRouteMap}
+/>
