@@ -91,7 +91,7 @@
 		>
 			<div class="flex items-center text-white">
 				<svg
-					class="w-5 h-5 mr-3 -ml-1 text-white animate-spin"
+					class="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
@@ -129,7 +129,7 @@
 					Arrivals and Departures
 				</h3>
 			</div>
-			<div class="space-y-2 overflow-y-scroll rounded-lg scrollbar-hidden h-96">
+			<div class="scrollbar-hidden h-96 space-y-2 overflow-y-scroll rounded-lg">
 				<div>
 					{#each arrivalsAndDepartures.arrivalsAndDepartures as arrival}
 						<ArrivalDeparture
