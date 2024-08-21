@@ -20,7 +20,9 @@
 
 	async function loadData(stopID) {
 		loading = true;
+
 		const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
+
 		if (response.ok) {
 			arrivalsAndDeparturesResponse = await response.json();
 			arrivalsAndDepartures = arrivalsAndDeparturesResponse.data.entry;
