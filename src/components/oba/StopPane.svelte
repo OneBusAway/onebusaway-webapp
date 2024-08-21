@@ -6,6 +6,8 @@
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
+	export let showAllStops = true;
+
 	let arrivalsAndDepartures;
 	let loading = false;
 	let error;
@@ -27,6 +29,11 @@
 		}
 
 		loading = false;
+	}
+
+	$: if (showAllStops) {
+		showTripDetails = false;
+		selectedTripDetails = null;
 	}
 
 	$: (async (s, arrDep) => {
@@ -66,9 +73,14 @@
 		};
 		showTripDetails = true;
 		dispatch('tripSelected', selectedTripDetails);
+		dispatch('updateRouteMap', { show: true });
 	}
+
 	function handleCloseTripDetailModal() {
 		showTripDetails = false;
+		dispatch('tripSelected', null);
+		dispatch('updateRouteMap', { show: false });
+		dispatch('showAllStops');
 	}
 </script>
 
