@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@fortawesome/free-regular-svg-icons": "^6.6.0"
+		"@fortawesome/free-regular-svg-icons": "^6.6.0",
+		"onebusaway-sdk": "^0.1.0-alpha.31"
 	}
 }
