@@ -16,5 +16,5 @@ export default async function (stopID) {
 		error(500, 'Unable to fetch arrivals-and-departures-for-stop.');
 	}
 
-	return response;
+	return json(response);
 }
