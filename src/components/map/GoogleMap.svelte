@@ -19,6 +19,7 @@
 	export let selectedRoute = null;
 	export let showRoute = false;
 	export let showRouteMap = false;
+	export let showAllStops = true;
 
 	const dispatch = createEventDispatcher();
 
@@ -82,6 +83,11 @@
 			element?.parentNode?.removeChild(element);
 		});
 		markers = [];
+	}
+
+	$: if (showAllStops) {
+		clearAllMarkers();
+		allStops.forEach((s) => addMarker(s));
 	}
 
 	$: if (selectedRoute && showRoute) {

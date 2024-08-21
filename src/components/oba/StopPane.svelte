@@ -6,6 +6,8 @@
 
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
+	export let showAllStops = true;
+
 	let arrivalsAndDepartures;
 	let loading = false;
 	let error;
@@ -27,6 +29,11 @@
 		}
 
 		loading = false;
+	}
+
+	$: if (showAllStops) {
+		showTripDetails = false;
+		selectedTripDetails = null;
 	}
 
 	$: (async (s, arrDep) => {
@@ -67,13 +74,13 @@
 		showTripDetails = true;
 		dispatch('tripSelected', selectedTripDetails);
 		dispatch('updateRouteMap', { show: true });
-		console.log('StopPane: Trip selected, showing route map');
 	}
 
 	function handleCloseTripDetailModal() {
 		showTripDetails = false;
 		dispatch('tripSelected', null);
 		dispatch('updateRouteMap', { show: false });
+		dispatch('showAllStops');
 	}
 </script>
 
@@ -84,7 +91,7 @@
 		>
 			<div class="flex items-center text-white">
 				<svg
-					class="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+					class="w-5 h-5 mr-3 -ml-1 text-white animate-spin"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
@@ -122,7 +129,7 @@
 					Arrivals and Departures
 				</h3>
 			</div>
-			<div class="scrollbar-hidden h-96 space-y-2 overflow-y-scroll rounded-lg">
+			<div class="space-y-2 overflow-y-scroll rounded-lg scrollbar-hidden h-96">
 				<div>
 					{#each arrivalsAndDepartures.arrivalsAndDepartures as arrival}
 						<ArrivalDeparture

@@ -8,6 +8,7 @@
 	let showRoute = false;
 	let selectedRoute = null;
 	let showRouteMap = false;
+	let showAllStops = false;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -21,22 +22,40 @@
 	}
 
 	function tripSelected(event) {
-		selectedTrip = event.detail;
-		showRoute = true;
-		selectedRoute = {
-			id: event.detail.routeId,
-			shortName: event.detail.routeShortName
-		};
+		if (event.detail) {
+			selectedTrip = event.detail;
+			showRoute = true;
+			selectedRoute = {
+				id: event.detail.routeId,
+				shortName: event.detail.routeShortName
+			};
+		} else {
+			selectedTrip = null;
+			showRoute = false;
+			selectedRoute = null;
+		}
 	}
 
 	function handleUpdateRouteMap(event) {
 		showRouteMap = event.detail.show;
+		showAllStops = !event.detail.show;
+	}
+
+	function handleShowAllStops() {
+		showAllStops = true;
+		showRouteMap = false;
 	}
 </script>
 
 {#if stop}
 	<ModalPane on:close={closePane}>
-		<StopPane {stop} on:tripSelected={tripSelected} on:updateRouteMap={handleUpdateRouteMap} />
+		<StopPane
+			{showAllStops}
+			{stop}
+			on:tripSelected={tripSelected}
+			on:updateRouteMap={handleUpdateRouteMap}
+			on:showAllStops={handleShowAllStops}
+		/>
 	</ModalPane>
 {/if}
 
