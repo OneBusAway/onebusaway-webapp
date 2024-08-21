@@ -4,13 +4,13 @@ import arrivalDepartureAPI from '$lib/RestAPI/arrivalsAndDeparturesForStop.js';
 export async function load({ params }) {
 	const stopID = params.stopID;
 	const stopResponse = await stopAPI(stopID);
-
+	const stopBody = await stopResponse.json();
 	const arrivalsAndDeparturesResponse = await arrivalDepartureAPI(stopID);
-	const arrivalsAndDeparturesResponseJson = await arrivalsAndDeparturesResponse.json();
+	const arrivalsAndDeparturesResponseJSON = await arrivalsAndDeparturesResponse.json();
 
 	return {
 		stopID: params.stopID,
-		stopData: stopResponse.data,
-		arrivalsAndDeparturesResponse: arrivalsAndDeparturesResponseJson
+		stopData: stopBody.data,
+		arrivalsAndDeparturesResponse: arrivalsAndDeparturesResponseJSON
 	};
 }
