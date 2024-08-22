@@ -1,19 +1,9 @@
-import { error, json } from '@sveltejs/kit';
-
-import { PUBLIC_OBA_SERVER_URL as baseURL } from '$env/static/public';
-import { PRIVATE_OBA_API_KEY as apiKey } from '$env/static/private';
-import onebusaway from 'onebusaway-sdk';
-
-const oba = new onebusaway({
-	baseURL,
-	apiKey
-});
-
-export default async function (stopID) {
+import oba from '../obaSdk';
+import { json } from '@sveltejs/kit';
+export default async function stop(stopID) {
 	const response = await oba.stop.retrieve(stopID);
-
 	if (response.code !== 200) {
-		error(500, 'Unable to fetch arrivals-and-departures-for-stop.');
+		error(500, 'Unable to fetch stop.');
 	}
 
 	return json(response);
