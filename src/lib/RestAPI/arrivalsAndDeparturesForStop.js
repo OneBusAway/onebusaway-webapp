@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import oba from '../obaSdk';
 
 export default async function arrivalsAndDeparturesForStop(stopID) {

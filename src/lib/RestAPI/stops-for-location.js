@@ -1,5 +1,5 @@
 import oba from '../obaSdk';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 export default async function stopsForLocation(queryParams) {
 	const response = await oba.stopsForLocation.list(queryParams);
 

@@ -1,5 +1,5 @@
 import oba from '../obaSdk';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 export default async function stop(stopID) {
 	const response = await oba.stop.retrieve(stopID);
 	if (response.code !== 200) {
