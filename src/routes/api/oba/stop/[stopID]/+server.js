@@ -1,6 +1,8 @@
-import stopAPI from '$lib/RestAPI/stop';
-
 /** @type {import('./$types').RequestHandler} */
+
+import stop from '../../../../../lib/RestAPI/stop';
+
 export async function GET({ params }) {
-	return stopAPI(params.stopID);
+	const stopID = params.stopID;
+	return stop(stopID);
 }
