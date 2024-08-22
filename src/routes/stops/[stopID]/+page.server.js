@@ -1,11 +1,11 @@
-import stopAPI from '$lib/RestAPI/stop.js';
-import arrivalDepartureAPI from '$lib/RestAPI/arrivalsAndDeparturesForStop.js';
+import arrivalsAndDeparturesForStop from '../../../lib/RestAPI/arrivalsAndDeparturesForStop.js';
+import stop from '../../../lib/RestAPI/stop.js';
 
 export async function load({ params }) {
 	const stopID = params.stopID;
-	const stopResponse = await stopAPI(stopID);
+	const stopResponse = await stop(stopID);
 	const stopBody = await stopResponse.json();
-	const arrivalsAndDeparturesResponse = await arrivalDepartureAPI(stopID);
+	const arrivalsAndDeparturesResponse = await arrivalsAndDeparturesForStop(stopID);
 	const arrivalsAndDeparturesResponseJSON = await arrivalsAndDeparturesResponse.json();
 
 	return {
