@@ -39,6 +39,7 @@
 
 			if (shape) {
 				polyline = await createPolyline(shape);
+				addArrowToPolyline();
 				polyline.setMap(map);
 			}
 		}
@@ -52,6 +53,25 @@
 				addStopMarker(stopTime, stop);
 			}
 		}
+	}
+
+	function addArrowToPolyline() {
+		const arrowSymbol = {
+			path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+			scale: 2,
+			strokeColor: '#FF0000',
+			strokeWeight: 3
+		};
+
+		polyline.setOptions({
+			icons: [
+				{
+					icon: arrowSymbol,
+					offset: '100%',
+					repeat: '50px'
+				}
+			]
+		});
 	}
 
 	function addStopMarker(stopTime, stop) {
