@@ -1,6 +1,9 @@
-import arrivalDepartureAPI from '$lib/RestAPI/arrivalsAndDeparturesForStop';
+import oba from '../../../../../lib/obaSdk.js';
+import arrivalsAndDeparturesForStop from '$lib/RestAPI/arrivalsAndDeparturesForStop';
 
 /** @type {import('./$types').RequestHandler} */
+
 export async function GET({ params }) {
-	return arrivalDepartureAPI(params.id);
+	const stopID = params.id;
+	return arrivalsAndDeparturesForStop(stopID);
 }
