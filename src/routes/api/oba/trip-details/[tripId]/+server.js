@@ -1,5 +1,3 @@
-import { error, json } from '@sveltejs/kit';
-import oba from '../../../../../lib/obaSdk.js';
 import tripDetails from '../../../../../lib/RestAPI/tripDetails.js';
 
 export async function GET({ params, url }) {

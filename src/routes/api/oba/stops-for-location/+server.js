@@ -1,5 +1,3 @@
-import { error, json } from '@sveltejs/kit';
-import oba from './../../../../lib/obaSdk.js';
 import stopsForLocation from '../../../../lib/RestAPI/stops-for-location.js';
 
 /** @type {import('./$types').RequestHandler} */

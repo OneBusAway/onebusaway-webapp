@@ -1,4 +1,3 @@
-import oba from '../../../../../lib/obaSdk.js';
 import arrivalsAndDeparturesForStop from '$lib/RestAPI/arrivalsAndDeparturesForStop';
 
 /** @type {import('./$types').RequestHandler} */
