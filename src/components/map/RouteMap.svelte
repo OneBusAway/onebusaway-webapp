@@ -1,7 +1,7 @@
 <script>
 	/* global google */
 	import { onMount, onDestroy } from 'svelte';
-	import { createPolyline, loadGoogleMapsLibrary } from '$lib/googleMaps';
+	import { createPolyline, loadGoogleMapsLibrary, addArrowToPolyline } from '$lib/googleMaps';
 
 	export let map;
 	export let tripId;
@@ -39,7 +39,7 @@
 
 			if (shape) {
 				polyline = await createPolyline(shape);
-				addArrowToPolyline();
+				addArrowToPolyline(polyline);
 				polyline.setMap(map);
 			}
 		}
@@ -53,25 +53,6 @@
 				addStopMarker(stopTime, stop);
 			}
 		}
-	}
-
-	function addArrowToPolyline() {
-		const arrowSymbol = {
-			path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-			scale: 2,
-			strokeColor: '#FF0000',
-			strokeWeight: 3
-		};
-
-		polyline.setOptions({
-			icons: [
-				{
-					icon: arrowSymbol,
-					offset: '100%',
-					repeat: '50px'
-				}
-			]
-		});
 	}
 
 	function addStopMarker(stopTime, stop) {
