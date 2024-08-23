@@ -9,7 +9,6 @@ export async function GET({ params }) {
 
 	try {
 		const response = await fetch(apiURL);
-		console.log('response:', response);
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);

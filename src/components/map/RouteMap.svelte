@@ -1,7 +1,7 @@
 <script>
 	/* global google */
 	import { onMount, onDestroy } from 'svelte';
-	import { createPolyline, loadGoogleMapsLibrary } from '$lib/googleMaps';
+	import { createPolyline, loadGoogleMapsLibrary, addArrowToPolyline } from '$lib/googleMaps';
 
 	export let map;
 	export let tripId;
@@ -39,6 +39,7 @@
 
 			if (shape) {
 				polyline = await createPolyline(shape);
+				addArrowToPolyline(polyline);
 				polyline.setMap(map);
 			}
 		}
