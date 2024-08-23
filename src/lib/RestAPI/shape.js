@@ -1,5 +1,6 @@
-import oba from '../obaSdk';
 import { error, json } from '@sveltejs/kit';
+import oba from '$lib/obaSdk';
+
 export default async function shape(shapeId) {
 	const response = await oba.shape.retrieve(shapeId);
 
