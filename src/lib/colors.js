@@ -1,0 +1,4 @@
+export const COLORS = {
+	POLYLINE: '#00FF00',
+	POLYLINE_ARROW: '#FF1111'
+};
