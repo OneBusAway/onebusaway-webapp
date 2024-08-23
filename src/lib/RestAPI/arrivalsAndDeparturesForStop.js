@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import oba from '../obaSdk';
+import oba from '$lib/obaSdk';
 
 export default async function arrivalsAndDeparturesForStop(stopID) {
 	const response = await oba.arrivalAndDeparture.list(stopID);
