@@ -1,3 +1,5 @@
+import { COLORS } from '$lib/colors';
+
 /**
  * Loads the Google Maps JavaScript library.
  * @param {string} apiKey - The API key for accessing the Google Maps API.
@@ -154,10 +156,33 @@ export async function createPolyline(shape) {
 	const polyline = new window.google.maps.Polyline({
 		path,
 		geodesic: true,
-		strokeColor: '#00FF00',
+		strokeColor: COLORS.POLYLINE,
 		strokeOpacity: 1.0,
 		strokeWeight: 4
 	});
 
 	return polyline;
+}
+
+/**
+ * Adds an arrow to the polyline.
+ * @param {google.maps.Polyline} polyline - The polyline to which the arrow will be added.
+ */
+export function addArrowToPolyline(polyline) {
+	const arrowSymbol = {
+		path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+		scale: 2,
+		strokeColor: COLORS.POLYLINE_ARROW,
+		strokeWeight: 3
+	};
+
+	polyline.setOptions({
+		icons: [
+			{
+				icon: arrowSymbol,
+				offset: '100%',
+				repeat: '50px'
+			}
+		]
+	});
 }
