@@ -169,6 +169,10 @@ export async function createPolyline(shape) {
  * @param {google.maps.Polyline} polyline - The polyline to which the arrow will be added.
  */
 export function addArrowToPolyline(polyline) {
+	if (!(polyline instanceof google.maps.Polyline)) {
+		console.error('Invalid polyline');
+		return;
+	}
 	const arrowSymbol = {
 		path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 		scale: 2,
