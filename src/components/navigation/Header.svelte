@@ -13,11 +13,9 @@
 	let searchInput = '';
 
 	const debouncedSearch = debounce(async () => {
-		if (searchInput.length > 2) {
-			const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
-			const results = await response.json();
-			dispatch('searchResults', results);
-		}
+		const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
+		const results = await response.json();
+		dispatch('searchResults', results);
 	}, 300);
 
 	$: if (searchInput) debouncedSearch();
