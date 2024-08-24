@@ -6,16 +6,21 @@
 	} from '$env/static/public';
 	import ThemeSwitcher from '$lib/ThemeSwitch/ThemeSwitcher.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { debounce } from '$lib/utils';
 
 	const dispatch = createEventDispatcher();
 
-	let searchQuery = '';
+	let searchInput = '';
 
-	function handleSearch(event) {
-		if (event.key === 'Enter') {
-			dispatch('You searched for ', searchQuery);
+	const debouncedSearch = debounce(async () => {
+		if (searchInput.length > 2) {
+			const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
+			const results = await response.json();
+			dispatch('searchResults', results);
 		}
-	}
+	}, 300);
+
+	$: if (searchInput) debouncedSearch();
 </script>
 
 <div
@@ -53,12 +58,11 @@
 					</div>
 					<input
 						type="search"
-						id="default-search"
+						id="search"
 						class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 ps-10 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
 						placeholder="Search a stop or route"
 						required
-						bind:value={searchQuery}
-						on:keydown={handleSearch}
+						bind:value={searchInput}
 					/>
 				</div>
 			</div>

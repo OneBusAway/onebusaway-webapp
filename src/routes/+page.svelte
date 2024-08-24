@@ -1,7 +1,9 @@
 <script>
 	import GoogleMap from '../components/map/GoogleMap.svelte';
+	import Header from '../components/navigation/Header.svelte';
 	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
+	import SearchResults from '../components/search/SearchResults.svelte';
 
 	let stop;
 	let selectedTrip = null;
@@ -9,6 +11,7 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
+	let searchResults = null;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -45,7 +48,13 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
+
+	function handleSearch(event) {
+		searchResults = event.detail;
+	}
 </script>
+
+<Header on:searchResults={handleSearch} />
 
 {#if stop}
 	<ModalPane on:close={closePane}>
@@ -56,6 +65,12 @@
 			on:updateRouteMap={handleUpdateRouteMap}
 			on:showAllStops={handleShowAllStops}
 		/>
+	</ModalPane>
+{/if}
+
+{#if searchResults}
+	<ModalPane on:close={closePane}>
+		<SearchResults results={searchResults} />
 	</ModalPane>
 {/if}
 
