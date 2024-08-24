@@ -1,4 +1,4 @@
-import tripDetails from '../../../../../lib/RestAPI/tripDetails.js';
+import oba, { handleOBAResponse } from '$lib/obaSdk.js';
 
 export async function GET({ params, url }) {
 	const { tripId } = params;
@@ -22,6 +22,7 @@ export async function GET({ params, url }) {
 	if (serviceDate) {
 		queryParams.serviceDate = serviceDate;
 	}
+	const response = await oba.tripDetails.retrieve(tripId, queryParams);
 
-	return tripDetails(tripId, queryParams);
+	return handleOBAResponse(response, 'trip-details');
 }
