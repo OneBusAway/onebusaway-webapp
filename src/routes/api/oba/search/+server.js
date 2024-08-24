@@ -11,22 +11,22 @@ export async function GET({ url }) {
 	const searchInput = url.searchParams.get('query');
 
 	try {
-		console.log('Search input:', searchInput);
-
-		const routeResponse = await oba.searchForRoute.retrieve({ input: searchInput });
-
-		console.log('Route Response:', routeResponse);
-
-		return new Response(JSON.stringify(routeResponse), {
+		const response = await oba.searchForRoute.retrieve({ input: searchInput });
+		return new Response(JSON.stringify(response), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (error) {
-		console.error('Search error:', error);
-
-		return new Response(JSON.stringify({ error: 'Search failed', details: error.message }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		if (error.error.code == 404) {
+			return new Response(JSON.stringify({ error: 'No results found' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		} else {
+			return new Response(JSON.stringify({ error: 'Search failed', details: error.message }), {
+				status: 500,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
 	}
 }
