@@ -1,6 +1,9 @@
-import shape from '../../../../../lib/RestAPI/shape.js';
+import oba, { handleOBAResponse } from '$lib/obaSdk.js';
 
+/** @type {import('./$types').RequestHandler} */
 export async function GET({ params }) {
 	const shapeId = params.shapeId;
-	return shape(shapeId);
+	const response = await oba.shape.retrieve(shapeId);
+
+	return handleOBAResponse(response, 'shape');
 }
