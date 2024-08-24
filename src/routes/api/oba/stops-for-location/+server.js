@@ -1,4 +1,4 @@
-import stopsForLocation from '../../../../lib/RestAPI/stops-for-location.js';
+import oba, { handleOBAResponse } from '$lib/obaSdk';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }) {
@@ -10,5 +10,7 @@ export async function GET({ url }) {
 		lon: lng
 	};
 
-	return stopsForLocation(queryParams);
+	const response = await oba.stopsForLocation.list(queryParams);
+
+	return handleOBAResponse(response, 'stops-for-location');
 }
