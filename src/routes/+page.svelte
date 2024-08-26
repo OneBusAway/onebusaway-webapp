@@ -11,7 +11,7 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
-	let searchResults = null;
+	let searchResults = [];
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -48,13 +48,20 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
-
 	function handleSearch(event) {
+		console.log('Raw search event:', event);
 		searchResults = event.detail;
+		console.log('Search results set:', searchResults);
+	}
+
+	function closeModal() {
+		searchResults = null;
 	}
 </script>
 
-<Header on:searchResults={handleSearch} />
+<Header 
+	on:searchResults={handleSearch}
+/>
 
 {#if stop}
 	<ModalPane on:close={closePane}>
@@ -68,9 +75,9 @@
 	</ModalPane>
 {/if}
 
-{#if searchResults}
-	<ModalPane on:close={closePane}>
-		<SearchResults results={searchResults} />
+{#if searchResults && searchResults.length > 0}
+	<ModalPane on:close={closeModal}>
+		<SearchResults {searchResults} />
 	</ModalPane>
 {/if}
 

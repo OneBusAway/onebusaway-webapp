@@ -11,11 +11,17 @@ export async function GET({ url }) {
 	const searchInput = url.searchParams.get('query');
 
 	try {
-		const response = await oba.searchForRoute.retrieve({ input: searchInput });
-		return new Response(JSON.stringify(response), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		const [stopResponse, routeResponse] = await Promise.all([
+			oba.searchForRoute.retrieve({ input: searchInput }),
+			oba.searchForStop.retrieve({ input: searchInput })
+		]);
+
+		console.log("Data test", routeResponse.data, stopResponse.data);
+
+		return new Response(JSON.stringify({
+			routeSearchResults: routeResponse.data,
+			stopSearchResults: stopResponse.data,
+		  }), { headers: { 'Content-Type': 'application/json' } });
 	} catch (error) {
 		if (error.error.code == 404) {
 			return new Response(JSON.stringify({ error: 'No results found' }), {
