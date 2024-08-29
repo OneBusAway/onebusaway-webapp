@@ -7,9 +7,6 @@
 </script>
 
 <div class="relative h-dvh w-full">
-	<div class="absolute left-0 right-0 top-0 z-40">
-		<Header />
-	</div>
 	<div>
 		<slot></slot>
 	</div>
