@@ -10,7 +10,8 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			$components: './src/components',
-			$images: './src/assets/images'
+			$images: './src/assets/images',
+			$lib: './src/lib'
 		}
 	},
 	preprocess: vitePreprocess()

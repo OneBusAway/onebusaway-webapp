@@ -1,6 +1,10 @@
-import stopAPI from '$lib/RestAPI/stop';
+import oba, { handleOBAResponse } from '$lib/obaSdk';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params }) {
-	return stopAPI(params.stopID);
+	const stopID = params.stopID;
+
+	const response = await oba.stop.retrieve(stopID);
+
+	return handleOBAResponse(response, 'stop');
 }

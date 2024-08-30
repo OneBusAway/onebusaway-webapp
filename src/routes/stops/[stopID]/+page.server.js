@@ -1,12 +1,17 @@
-import stopAPI from '$lib/RestAPI/stop.js';
-import arrivalDepartureAPI from '$lib/RestAPI/arrivalsAndDeparturesForStop.js';
+import oba, { handleOBAResponse } from '$lib/obaSdk.js';
 
 export async function load({ params }) {
 	const stopID = params.stopID;
-	const stopResponse = await stopAPI(stopID);
-	const stopBody = await stopResponse.json();
-	const arrivalsAndDeparturesResponse = await arrivalDepartureAPI(stopID);
-	const arrivalsAndDeparturesResponseJSON = await arrivalsAndDeparturesResponse.json();
+
+	const stopResponse = await oba.stop.retrieve(stopID);
+	const stopBody = await handleOBAResponse(stopResponse, 'stop').json();
+
+	const arrivalsAndDeparturesResponse = await oba.arrivalAndDeparture.list(stopID);
+
+	const arrivalsAndDeparturesResponseJSON = await handleOBAResponse(
+		arrivalsAndDeparturesResponse,
+		'arrivals-and-departures-for-stop'
+	).json();
 
 	return {
 		stopID: params.stopID,
