@@ -42,7 +42,7 @@
 	function routeSelected(event) {
 		const route = event.detail.route;
 		const routeId = route?.id || searchQuery;
-        alert(`TODO: show route ${routeId}`);
+		alert(`TODO: show route ${routeId}`);
 		closeModal();
 	}
 
@@ -80,9 +80,17 @@
 	</ModalPane>
 {/if}
 
-{#if searchResults && (searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0)}
+{#if searchResults}
 	<ModalPane on:close={closeModal}>
-		<SearchResults {searchResults} on:routeSelected={routeSelected} on:stopSelected={stopSelected} />
+		{#if searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0}
+			<SearchResults
+				{searchResults}
+				on:routeSelected={routeSelected}
+				on:stopSelected={stopSelected}
+			/>
+		{:else}
+			<p class="p-4 text-center">No results found.</p>
+		{/if}
 	</ModalPane>
 {/if}
 
