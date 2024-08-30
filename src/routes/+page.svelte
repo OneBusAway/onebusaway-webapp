@@ -39,6 +39,13 @@
 		}
 	}
 
+	function routeSelected(event) {
+		const route = event.detail.route;
+		const routeId = route?.id || searchQuery;
+        alert(`TODO: show route ${routeId}`);
+		closeModal();
+	}
+
 	function handleUpdateRouteMap(event) {
 		showRouteMap = event.detail.show;
 		showAllStops = !event.detail.show;
@@ -75,7 +82,7 @@
 
 {#if searchResults && (searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0)}
 	<ModalPane on:close={closeModal}>
-		<SearchResults {searchResults} />
+		<SearchResults {searchResults} on:routeSelected={routeSelected} on:stopSelected={stopSelected} />
 	</ModalPane>
 {/if}
 

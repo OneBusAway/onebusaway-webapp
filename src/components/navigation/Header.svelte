@@ -17,7 +17,8 @@
 			try {
 				const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
 				const results = await response.json();
-				console.log('Search API response:', results);
+				console.log('Route results:', results.routeSearchResults);
+        		console.log('Stop results:', results.stopSearchResults);
 				dispatch('searchResults', results);
 			} catch (error) {
 				console.error('Error fetching search results:', error);

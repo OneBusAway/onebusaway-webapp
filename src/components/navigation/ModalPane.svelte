@@ -14,7 +14,11 @@
 	}
 </script>
 
-<div class="modal-pane" in:fly={{ y: 200, duration: 500 }} out:fly={{ y: 200, duration: 500 }}>
+<div
+	class="modal-pane scroll-hidden"
+	in:fly={{ y: 200, duration: 500 }}
+	out:fly={{ y: 200, duration: 500 }}
+>
 	<div class="py-1 text-right">
 		<button
 			type="button"
@@ -32,7 +36,7 @@
 
 <style lang="postcss">
 	.modal-pane {
-		@apply absolute bottom-0 left-0 z-40 w-full bg-transparent px-2 shadow-lg md:max-w-prose;
+		@apply absolute bottom-0 left-0 z-40 max-h-[40rem] w-full overflow-y-scroll bg-transparent px-2 shadow-lg md:max-w-prose;
 		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-[#F3F2F8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 dark:bg-black;
 	}
 

@@ -12,11 +12,12 @@ export async function GET({ url }) {
 
 	try {
 		const [stopResponse, routeResponse] = await Promise.all([
-			oba.searchForRoute.retrieve({ input: searchInput }),
-			oba.searchForStop.retrieve({ input: searchInput })
+			oba.searchForRoute.list({ input: searchInput }),
+			oba.searchForStop.list({ input: searchInput })
 		]);
 
-		console.log("Data test", routeResponse.data, stopResponse.data);
+		console.log("Route API response:", routeResponse);
+    	console.log("Stop API response:", stopResponse);
 
 		return new Response(JSON.stringify({
 			routeSearchResults: routeResponse.data,
