@@ -1,5 +1,5 @@
 <script>
-	export let searchResults = [];
+	export let searchResults = null;
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -19,7 +19,7 @@
 	<h2 class="mb-4 text-xl font-bold">Search Results</h2>
 
 	<h3 class="mb-2 text-lg font-semibold">Stops</h3>
-	{#if searchResults.stopSearchResults && searchResults.stopSearchResults.list && searchResults.stopSearchResults.list.length > 0}
+	{#if searchResults?.stopSearchResults?.list?.length > 0}
 		<ul>
 			{#each searchResults.stopSearchResults.list as stop}
 				<li>
@@ -34,7 +34,7 @@
 	{/if}
 
 	<h3 class="mt-4 mb-2 text-lg font-semibold">Routes</h3>
-	{#if searchResults.routeSearchResults && searchResults.routeSearchResults.list && searchResults.routeSearchResults.list.length > 0}
+	{#if searchResults?.routeSearchResults?.list?.length > 0}
 		<ul>
 			{#each searchResults.routeSearchResults.list as route}
 				<li>

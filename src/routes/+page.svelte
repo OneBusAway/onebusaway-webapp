@@ -11,7 +11,7 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
-	let searchResults = [];
+	let searchResults = null;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -59,9 +59,7 @@
 	}
 </script>
 
-<Header 
-	on:searchResults={handleSearch}
-/>
+<Header on:searchResults={handleSearch} />
 
 {#if stop}
 	<ModalPane on:close={closePane}>
@@ -75,7 +73,7 @@
 	</ModalPane>
 {/if}
 
-{#if searchResults && searchResults.length > 0}
+{#if searchResults && (searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0)}
 	<ModalPane on:close={closeModal}>
 		<SearchResults {searchResults} />
 	</ModalPane>
