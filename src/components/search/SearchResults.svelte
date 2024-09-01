@@ -1,6 +1,7 @@
 <script>
 	export let searchResults = null;
 	import { createEventDispatcher } from 'svelte';
+	import { compassDirection } from '$lib/formatters';
 
 	const dispatch = createEventDispatcher();
 
@@ -43,7 +44,7 @@
 						on:click={() => handleStopClick(stop)}
 						class="flex h-auto w-full items-center justify-between border-b-[1px] border-[#C6C6C8] bg-[#ffffff] p-4 hover:cursor-pointer dark:text-white hover:bg-[#e3e3e3] dark:border-[#313135] dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
 					>
-						{stop.shortName + ` ` + stop.longName || stop.name || `Stop ${stop.id}`}
+						{stop.name} ({compassDirection(stop.direction)})
 					</button>
 				</li>
 			{/each}
