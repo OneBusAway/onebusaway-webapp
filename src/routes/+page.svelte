@@ -41,7 +41,7 @@
 
 	function routeSelected(event) {
 		const route = event.detail.route;
-		const routeId = route?.id || searchQuery;
+		const routeId = route?.id;
 		alert(`TODO: show route ${routeId}`);
 		closeModal();
 	}
