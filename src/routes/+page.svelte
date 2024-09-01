@@ -100,4 +100,5 @@
 	on:stopSelected={stopSelected}
 	{showRoute}
 	{showRouteMap}
+	{stop}
 />

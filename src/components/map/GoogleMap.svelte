@@ -20,6 +20,9 @@
 	export let showRoute = false;
 	export let showRouteMap = false;
 	export let showAllStops = true;
+	export let stop = null;
+
+	let selectedStopID = null;
 
 	const dispatch = createEventDispatcher();
 
@@ -85,6 +88,15 @@
 		markers = [];
 	}
 
+	$: if (stop && map) {
+		// TODO: make sure that these markers are deduped. i.e. we shouldn't
+		// show the same stop twice on the map
+		if (stop.id != selectedStopID) {
+			addMarker(stop);
+			map.setCenter({ lat: stop.lat, lng: stop.lon });
+		}
+	}
+
 	$: if (showAllStops) {
 		clearAllMarkers();
 		allStops.forEach((s) => addMarker(s));
@@ -102,16 +114,16 @@
 	function addMarker(s) {
 		const container = document.createElement('div');
 		document.body.appendChild(container);
-		function handleClick() {
-			pushState(`/stops/${s.id}`);
-			dispatch('stopSelected', { stop: s });
-		}
 
 		new StopMarker({
 			target: container,
 			props: {
 				stop: s,
-				onClick: handleClick
+				onClick: () => {
+					selectedStopID = s.id;
+					pushState(`/stops/${s.id}`);
+					dispatch('stopSelected', { stop: s });
+				}
 			}
 		});
 
