@@ -16,10 +16,12 @@ export async function GET({ url }) {
 			oba.searchForStop.list({ input: searchInput })
 		]);
 
-		return new Response(JSON.stringify({
+		return new Response(
+			JSON.stringify({
 				routeSearchResults: routeResponse.data,
-				stopSearchResults: stopResponse.data,
-		  }), { headers: { 'Content-Type': 'application/json' } }
+				stopSearchResults: stopResponse.data
+			}),
+			{ headers: { 'Content-Type': 'application/json' } }
 		);
 	} catch (error) {
 		if (error.error.code == 404) {
