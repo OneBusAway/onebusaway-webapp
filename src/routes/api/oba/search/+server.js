@@ -11,18 +11,16 @@ export async function GET({ url }) {
 	const searchInput = url.searchParams.get('query');
 
 	try {
-		const [stopResponse, routeResponse] = await Promise.all([
+		const [routeResponse, stopResponse] = await Promise.all([
 			oba.searchForRoute.list({ input: searchInput }),
 			oba.searchForStop.list({ input: searchInput })
 		]);
 
-		console.log("Route API response:", routeResponse);
-    	console.log("Stop API response:", stopResponse);
-
 		return new Response(JSON.stringify({
-			routeSearchResults: routeResponse.data,
-			stopSearchResults: stopResponse.data,
-		  }), { headers: { 'Content-Type': 'application/json' } });
+				routeSearchResults: routeResponse.data,
+				stopSearchResults: stopResponse.data,
+		  }), { headers: { 'Content-Type': 'application/json' } }
+		);
 	} catch (error) {
 		if (error.error.code == 404) {
 			return new Response(JSON.stringify({ error: 'No results found' }), {
