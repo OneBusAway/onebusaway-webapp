@@ -69,7 +69,7 @@
 <Header on:searchResults={handleSearch} />
 
 {#if stop}
-	<ModalPane on:close={closePane}>
+	<ModalPane on:close={closePane} {stop}>
 		<StopPane
 			{showAllStops}
 			{stop}
