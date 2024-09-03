@@ -1,13 +1,14 @@
 <script>
-	import { faBus, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+	import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	export let stop;
 	export let onClick;
+	export let icon;
 </script>
 
 <button class="custom-marker dark:border-[#5a2c2c]" on:click={onClick}>
 	<span class="bus-icon dark:text-white">
-		<FontAwesomeIcon icon={faBus} class="text-black " />
+		<FontAwesomeIcon {icon} class=" text-black" />
 		{#if stop.direction}
 			<span class="direction-arrow {stop.direction.toLowerCase()} dark:text-white">
 				<FontAwesomeIcon icon={faCaretUp} />

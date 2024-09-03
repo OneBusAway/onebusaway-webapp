@@ -14,6 +14,12 @@
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
+	import { faBus } from '@fortawesome/free-solid-svg-icons';
+	import {
+		RouteType,
+		routePriorities,
+		prioritizedRouteTypeForDisplay
+	} from '../../config/routeConfig';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -30,6 +36,7 @@
 
 	let markers = [];
 	let allStops = [];
+	let routeReference = [];
 
 	async function loadStopsForLocation(lat, lng) {
 		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
@@ -61,6 +68,7 @@
 	async function loadStopsAndAddMarkers(lat, lng) {
 		const json = await loadStopsForLocation(lat, lng);
 		const newStops = json.data.list;
+		routeReference = json.data.references?.routes || [];
 
 		allStops = [...new Map([...allStops, ...newStops].map((stop) => [stop.id, stop])).values()];
 
@@ -68,9 +76,9 @@
 
 		if (showRoute && selectedRoute) {
 			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
-			stopsToShow.forEach((s) => addMarker(s));
+			stopsToShow.forEach((s) => addMarker(s, routeReference));
 		} else {
-			newStops.forEach((s) => addMarker(s));
+			newStops.forEach((s) => addMarker(s, routeReference));
 		}
 	}
 
@@ -112,14 +120,27 @@
 		allStops.forEach((s) => addMarker(s));
 	}
 
-	function addMarker(s) {
+	function addMarker(s, routeReference) {
 		const container = document.createElement('div');
 		document.body.appendChild(container);
+
+		let icon = faBus;
+
+		if (routeReference && routeReference.length > 0) {
+			const availableRoutes = s.routeIds
+				.map((id) => routeReference.find((r) => r.id === id))
+				.filter(Boolean);
+			const routeTypes = new Set(availableRoutes.map((r) => r.type));
+			const prioritizedType =
+				routePriorities.find((type) => routeTypes.has(type)) || RouteType.UNKNOWN;
+			icon = prioritizedRouteTypeForDisplay(prioritizedType);
+		}
 
 		new StopMarker({
 			target: container,
 			props: {
 				stop: s,
+				icon,
 				onClick: () => {
 					selectedStopID = s.id;
 					pushState(`/stops/${s.id}`);
