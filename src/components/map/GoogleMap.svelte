@@ -93,6 +93,7 @@
 		// show the same stop twice on the map
 		if (stop.id != selectedStopID) {
 			addMarker(stop);
+			pushState(`/stops/${stop.id}`);
 			map.setCenter({ lat: stop.lat, lng: stop.lon });
 		}
 	}
