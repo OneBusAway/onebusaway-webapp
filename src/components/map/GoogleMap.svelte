@@ -14,6 +14,7 @@
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
+	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -27,6 +28,7 @@
 	const dispatch = createEventDispatcher();
 
 	let map = null;
+	let mapTypeId = 'roadmap';
 
 	let markers = [];
 	let allStops = [];
@@ -185,6 +187,13 @@
 		});
 	}
 
+	function handleMapTypeChange(event) {
+		mapTypeId = event.detail;
+		if (map) {
+			map.setMapTypeId(mapTypeId);
+		}
+	}
+
 	onMount(async () => {
 		if (!window.google) {
 			loadGoogleMapsLibrary(apiKey);
@@ -218,6 +227,7 @@
 {/if}
 
 <LocationButton on:locationObtained={handleLocationObtained} />
+<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
 
 <style>
 	#map {
