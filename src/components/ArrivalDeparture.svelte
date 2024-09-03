@@ -74,7 +74,7 @@
 		<p class="text-xl text-left font-semibold text-black dark:text-white">
 			{routeShortName} - {tripHeadsign}
 		</p>
-		<p class="font-semibold text-black dark:text-white">
+		<p class="font-semibold text-black dark:text-white text-left">
 			<span class="text-md">{formatTime(scheduledArrivalTime)}</span> -
 			<span class={getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).color}>
 				{getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).text}
