@@ -1,4 +1,5 @@
 <script>
+	import { pushState } from '$app/navigation';
 	import GoogleMap from '../components/map/GoogleMap.svelte';
 	import Header from '../components/navigation/Header.svelte';
 	import ModalPane from '../components/navigation/ModalPane.svelte';
@@ -15,6 +16,7 @@
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
+		pushState(`/stops/${stop.id}`);
 	}
 
 	function closePane() {
