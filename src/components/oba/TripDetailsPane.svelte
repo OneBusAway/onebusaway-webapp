@@ -86,7 +86,7 @@
 	{#if error}
 		<p>{error}</p>
 	{:else if tripDetails}
-		<h2>
+		<h2 class='h2'>
 			{#if routeInfo}
 				Route {routeInfo.shortName} -
 			{/if}
