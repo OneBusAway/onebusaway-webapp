@@ -56,9 +56,7 @@
 		showRouteMap = false;
 	}
 	function handleSearch(event) {
-		console.log('Raw search event:', event);
 		searchResults = event.detail;
-		console.log('Search results set:', searchResults);
 	}
 
 	function closeModal() {

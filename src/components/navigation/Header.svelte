@@ -12,16 +12,12 @@
 	let searchInput = '';
 
 	async function handleSearch() {
-		if (searchInput.length > 2) {
-			try {
-				const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
-				const results = await response.json();
-				console.log('Route results:', results.routeSearchResults);
-				console.log('Stop results:', results.stopSearchResults);
-				dispatch('searchResults', results);
-			} catch (error) {
-				console.error('Error fetching search results:', error);
-			}
+		try {
+			const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
+			const results = await response.json();
+			dispatch('searchResults', results);
+		} catch (error) {
+			console.error('Error fetching search results:', error);
 		}
 	}
 
