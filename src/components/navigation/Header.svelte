@@ -29,7 +29,8 @@
 </script>
 
 <div
-	class="bg-blur-md flex items-center justify-between border-b border-gray-500 bg-white/80 px-4 dark:bg-black dark:text-white">
+	class="bg-blur-md flex items-center justify-between border-b border-gray-500 bg-white/80 px-4 dark:bg-black dark:text-white"
+>
 	<div class="flex items-center justify-center gap-4 px-2 py-2">
 		<div>
 			<a href="/">

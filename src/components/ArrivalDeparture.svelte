@@ -25,8 +25,7 @@
 
 		if (predictedTime == 0) {
 			return { status: 'scheduled', text: 'Scheduled/not real-time', color: 'text-gray-500' };
-		}
-		else if (predictedDiff <= 0) {
+		} else if (predictedDiff <= 0) {
 			return {
 				status: 'early',
 				text: 'arrives ' + Math.abs(Math.floor(predictedDiff / 60000)) + ' min early',
@@ -74,10 +73,10 @@
 	class="flex h-auto w-full items-center justify-between border-b-[1px] border-[#C6C6C8] bg-[#ffffff] p-4 hover:cursor-pointer hover:bg-[#e3e3e3] dark:border-[#313135] dark:bg-[#1c1c1c] hover:dark:bg-[#363636]"
 >
 	<div class="flex flex-col gap-1">
-		<p class="text-xl text-left font-semibold text-black dark:text-white">
+		<p class="text-left text-xl font-semibold text-black dark:text-white">
 			{routeShortName} - {tripHeadsign}
 		</p>
-		<p class="font-semibold text-black dark:text-white text-left">
+		<p class="text-left font-semibold text-black dark:text-white">
 			<span class="text-md">{formatTime(scheduledArrivalTime)}</span> -
 			<span class={getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).color}>
 				{getArrivalStatus(predictedArrivalTime, scheduledArrivalTime).text}

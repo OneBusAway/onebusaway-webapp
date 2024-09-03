@@ -127,9 +127,7 @@
 				</div>
 			</div>
 			<div>
-				<h2 class="h2 ml-4 mt-4">
-					Arrivals and Departures
-				</h2>
+				<h2 class="h2 ml-4 mt-4">Arrivals and Departures</h2>
 			</div>
 			<div class="scrollbar-hidden h-96 space-y-2 overflow-y-scroll rounded-lg">
 				<div>
