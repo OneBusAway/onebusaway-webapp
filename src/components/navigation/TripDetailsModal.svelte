@@ -12,7 +12,7 @@
 	<div class="py-1 text-left">
 		<button type="button" on:click={onClose} class="close-button">
 			<FontAwesomeIcon icon={faArrowLeft} class="font-black text-black dark:text-white" />
-			<h1 class="font-semibold text-black dark:text-white">Back to {stop.name}</h1>
+			<div class="font-semibold text-black dark:text-white">Back to {stop.name}</div>
 		</button>
 	</div>
 	<div

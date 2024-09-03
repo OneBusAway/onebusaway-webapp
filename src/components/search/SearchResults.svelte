@@ -15,9 +15,9 @@
 </script>
 
 <div class="p-2">
-	<h2 class="mb-4 text-xl font-semibold uppercase text-[#86858B]">Search Results</h2>
+	<h2 class="h2">Search Results</h2>
 
-	<h3 class="mb-2 text-lg font-semibold dark:text-white">Routes</h3>
+	<h3 class="h3">Routes</h3>
 	{#if searchResults?.routeSearchResults?.list?.length > 0}
 		<ul class="overflow-hidden rounded-lg">
 			{#each searchResults.routeSearchResults.list as route}
@@ -35,7 +35,7 @@
 		<p>No routes found.</p>
 	{/if}
 
-	<h3 class="mb-2 mt-4 text-lg font-semibold dark:text-white">Stops</h3>
+	<h3 class="h3">Stops</h3>
 	{#if searchResults?.stopSearchResults?.list?.length > 0}
 		<ul class="overflow-hidden rounded-lg">
 			{#each searchResults.stopSearchResults.list as stop}

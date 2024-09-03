@@ -56,9 +56,7 @@
 		showRouteMap = false;
 	}
 	function handleSearch(event) {
-		console.log('Raw search event:', event);
 		searchResults = event.detail;
-		console.log('Search results set:', searchResults);
 	}
 
 	function closeModal() {
@@ -66,7 +64,9 @@
 	}
 </script>
 
-<Header on:searchResults={handleSearch} />
+<div class="absolute left-0 right-0 top-0 z-40">
+	<Header on:searchResults={handleSearch} />
+</div>
 
 {#if stop}
 	<ModalPane on:close={closePane} {stop}>
@@ -89,7 +89,7 @@
 				on:stopSelected={stopSelected}
 			/>
 		{:else}
-			<p class="p-4 text-center">No results found.</p>
+			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
 		{/if}
 	</ModalPane>
 {/if}

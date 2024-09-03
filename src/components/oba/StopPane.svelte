@@ -119,17 +119,15 @@
 		<div>
 			<div>
 				<div class="h-36 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
-					<h1 class="text-xl font-semibold text-white">{stop.name}</h1>
-					<h1 class="text-lg text-white">Stop #{stop.id}</h1>
+					<h1 class="h1 mb-1">{stop.name}</h1>
+					<h2 class="h2 mb-1">Stop #{stop.id}</h2>
 					{#if routeShortNames()}
-						<h1 class="text-lg text-white">Routes: {routeShortNames().join(', ')}</h1>
+						<h2 class="h2">Routes: {routeShortNames().join(', ')}</h2>
 					{/if}
 				</div>
 			</div>
 			<div>
-				<h3 class="mb-1 ml-7 mt-4 text-xl font-semibold uppercase text-[#86858B]">
-					Arrivals and Departures
-				</h3>
+				<h2 class="h2 ml-4 mt-4">Arrivals and Departures</h2>
 			</div>
 			<div class="scrollbar-hidden h-96 space-y-2 overflow-y-scroll rounded-lg">
 				<div>
