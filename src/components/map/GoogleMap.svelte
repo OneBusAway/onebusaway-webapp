@@ -9,7 +9,6 @@
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { pushState } from '$app/navigation';
 	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
@@ -101,7 +100,6 @@
 		// show the same stop twice on the map
 		if (stop.id != selectedStopID) {
 			addMarker(stop);
-			pushState(`/stops/${stop.id}`);
 			map.setCenter({ lat: stop.lat, lng: stop.lon });
 		}
 	}
@@ -143,7 +141,6 @@
 				icon,
 				onClick: () => {
 					selectedStopID = s.id;
-					pushState(`/stops/${s.id}`);
 					dispatch('stopSelected', { stop: s });
 				}
 			}
