@@ -1,7 +1,9 @@
 <script>
 	import GoogleMap from '../components/map/GoogleMap.svelte';
+	import Header from '../components/navigation/Header.svelte';
 	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
+	import SearchResults from '../components/search/SearchResults.svelte';
 
 	let stop;
 	let selectedTrip = null;
@@ -9,6 +11,7 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
+	let searchResults = null;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -36,6 +39,13 @@
 		}
 	}
 
+	function routeSelected(event) {
+		const route = event.detail.route;
+		const routeId = route?.id;
+		alert(`TODO: show route ${routeId}`);
+		closeModal();
+	}
+
 	function handleUpdateRouteMap(event) {
 		showRouteMap = event.detail.show;
 		showAllStops = !event.detail.show;
@@ -45,10 +55,21 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
+	function handleSearch(event) {
+		console.log('Raw search event:', event);
+		searchResults = event.detail;
+		console.log('Search results set:', searchResults);
+	}
+
+	function closeModal() {
+		searchResults = null;
+	}
 </script>
 
+<Header on:searchResults={handleSearch} />
+
 {#if stop}
-	<ModalPane on:close={closePane}>
+	<ModalPane on:close={closePane} {stop}>
 		<StopPane
 			{showAllStops}
 			{stop}
@@ -59,10 +80,25 @@
 	</ModalPane>
 {/if}
 
+{#if searchResults}
+	<ModalPane on:close={closeModal}>
+		{#if searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0}
+			<SearchResults
+				{searchResults}
+				on:routeSelected={routeSelected}
+				on:stopSelected={stopSelected}
+			/>
+		{:else}
+			<p class="p-4 text-center">No results found.</p>
+		{/if}
+	</ModalPane>
+{/if}
+
 <GoogleMap
 	{selectedTrip}
 	{selectedRoute}
 	on:stopSelected={stopSelected}
 	{showRoute}
 	{showRouteMap}
+	{stop}
 />
