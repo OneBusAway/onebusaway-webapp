@@ -1,5 +1,5 @@
 <script>
-	import { faBus, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+	import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	export let stop;
 	export let onClick;
