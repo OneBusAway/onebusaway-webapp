@@ -1,4 +1,5 @@
 <script>
+	import Header from '$components/navigation/Header.svelte';
 	import '../app.css';
 	import { config } from '@fortawesome/fontawesome-svg-core';
 	import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -6,6 +7,9 @@
 </script>
 
 <div class="relative h-dvh w-full">
+	<div class="absolute w-full">
+		<Header />
+	</div>
 	<div>
 		<slot></slot>
 	</div>
