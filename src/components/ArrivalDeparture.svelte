@@ -23,7 +23,10 @@
 		const predictedDiff = predicted - now;
 		const scheduledDiff = scheduled - now;
 
-		if (predictedDiff <= 0) {
+		if (predictedTime == 0) {
+			return { status: 'scheduled', text: 'Scheduled/not real-time', color: 'text-gray-500' };
+		}
+		else if (predictedDiff <= 0) {
 			return {
 				status: 'early',
 				text: 'arrives ' + Math.abs(Math.floor(predictedDiff / 60000)) + ' min early',
