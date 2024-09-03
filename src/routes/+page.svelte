@@ -64,7 +64,9 @@
 	}
 </script>
 
-<Header on:searchResults={handleSearch} />
+<div class='absolute z-40 top-0 left-0 right-0'>
+	<Header on:searchResults={handleSearch} />
+</div>
 
 {#if stop}
 	<ModalPane on:close={closePane} {stop}>
