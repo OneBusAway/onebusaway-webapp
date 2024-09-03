@@ -6,7 +6,7 @@
 	config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 </script>
 
-<div class="h-dvh relative w-full">
+<div class="relative h-dvh w-full">
 	<div class="absolute w-full">
 		<Header />
 	</div>
