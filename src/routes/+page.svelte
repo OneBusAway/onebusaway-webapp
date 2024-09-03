@@ -89,7 +89,7 @@
 				on:stopSelected={stopSelected}
 			/>
 		{:else}
-			<p class="p-4 text-center">No results found.</p>
+			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
 		{/if}
 	</ModalPane>
 {/if}
