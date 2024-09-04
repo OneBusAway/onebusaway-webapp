@@ -3,7 +3,7 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faX } from '@fortawesome/free-solid-svg-icons';
 	import { keybinding } from '$lib/keybinding';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { pushState } from '$app/navigation';
 
 	export let stop = null;
@@ -29,18 +29,25 @@
 			use:keybinding={{ code: 'Escape' }}
 			class="close-button"
 		>
-			<FontAwesomeIcon icon={faX} class="font-black text-black dark:text-white" />
+			<FontAwesomeIcon icon={faX} class="dark:text-white font-black text-black" />
 			<span class="sr-only">Close</span>
 		</button>
 	</div>
 
-	<slot></slot>
+	<div class="modal-content">
+		<slot></slot>
+	</div>
 </div>
 
 <style lang="postcss">
 	.modal-pane {
-		@apply absolute bottom-0 left-0 max-h-[40rem] w-full overflow-y-scroll bg-transparent px-2 shadow-lg md:max-w-prose;
+		@apply absolute bottom-0 left-0 max-h-[40rem] w-[25em] overflow-y-scroll bg-transparent px-2 shadow-lg md:w-full md:max-w-prose lg:w-full;
 		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-[#F3F2F8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 dark:bg-black;
+	}
+
+	.modal-content {
+		@apply overflow-y-hidden;
+		max-height: calc(100vh - 6.6em);
 	}
 
 	.close-button {
