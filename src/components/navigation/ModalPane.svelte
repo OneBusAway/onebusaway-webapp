@@ -29,7 +29,7 @@
 			use:keybinding={{ code: 'Escape' }}
 			class="close-button"
 		>
-			<FontAwesomeIcon icon={faX} class="font-black text-black dark:text-white" />
+			<FontAwesomeIcon icon={faX} class="dark:text-white font-black text-black" />
 			<span class="sr-only">Close</span>
 		</button>
 	</div>
@@ -46,7 +46,6 @@
 	}
 
 	.modal-content {
-		@apply overflow-y-hidden;
 		max-height: calc(100vh - 6.6em);
 	}
 
