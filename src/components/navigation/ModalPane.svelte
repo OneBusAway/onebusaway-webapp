@@ -3,7 +3,7 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faX } from '@fortawesome/free-solid-svg-icons';
 	import { keybinding } from '$lib/keybinding';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { pushState } from '$app/navigation';
 
 	export let stop = null;
@@ -29,7 +29,7 @@
 			use:keybinding={{ code: 'Escape' }}
 			class="close-button"
 		>
-			<FontAwesomeIcon icon={faX} class="dark:text-white font-black text-black" />
+			<FontAwesomeIcon icon={faX} class="font-black text-black dark:text-white" />
 			<span class="sr-only">Close</span>
 		</button>
 	</div>
