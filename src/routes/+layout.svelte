@@ -7,10 +7,10 @@
 </script>
 
 <div class="relative h-dvh w-full">
-	<div class="absolute w-full">
+	<div class="fixed w-full">
 		<Header />
 	</div>
-	<div>
+	<div class="h-[100vh] overflow-hidden">
 		<slot></slot>
 	</div>
 </div>
