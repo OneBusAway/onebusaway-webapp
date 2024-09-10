@@ -74,7 +74,7 @@
 
 			infoWindow = new google.maps.InfoWindow({
 				content: `<div>
-                            <h3 class='h3'>${stop.name}</h3>
+                            <h3 class='h3 dark:text-black text-black'>${stop.name}</h3>
                             <p>Arrival time: ${new Date(stopTime.arrivalTime * 1000).toLocaleTimeString()}</p>
                         </div>`
 			});
