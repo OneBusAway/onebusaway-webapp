@@ -73,9 +73,9 @@
 			infoWindow?.close();
 
 			infoWindow = new google.maps.InfoWindow({
-				content: `<div>
-                            <h3 class='h3'>${stop.name}</h3>
-                            <p>Arrival time: ${new Date(stopTime.arrivalTime * 1000).toLocaleTimeString()}</p>
+				content: `<div class="my-1">
+                            <h3 class='dark:text-black h3 font-semibold text-black'>${stop.name}</h3>
+                            <p><span class="bg-[#8250DF] text-white py-[2px] px-[2px] rounded-md">Arrival time:</span> ${new Date(stopTime.arrivalTime * 1000).toLocaleTimeString()}</p>
                         </div>`
 			});
 			infoWindow.open(map, marker);
