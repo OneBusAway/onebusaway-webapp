@@ -1,15 +1,15 @@
 <script>
-	/* global google */
 	import { browser } from '$app/environment';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import {
 		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
-		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
+		PUBLIC_OBA_REGION_CENTER_LNG as initialLng,
+		PUBLIC_OBA_MAP_PROVIDER as mapProvider
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
+	import { loadGoogleMapsLibrary } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
@@ -21,6 +21,8 @@
 		routePriorities,
 		prioritizedRouteTypeForDisplay
 	} from '../../config/routeConfig';
+	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
+	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -33,12 +35,24 @@
 
 	const dispatch = createEventDispatcher();
 
-	let map = null;
+	let mapInstance = null;
 	let mapTypeId = 'roadmap';
+	let mapElement;
 
 	let markers = [];
 	let allStops = [];
 	let routeReference = [];
+
+	const createMapProvider = () => {
+		switch (mapProvider) {
+			case 'google':
+				return new GoogleMapProvider(apiKey);
+			case 'osm':
+				return new OpenStreetMapProvider();
+			default:
+				throw new Error(`Unsupported map provider: ${mapProvider}`);
+		}
+	};
 
 	async function loadStopsForLocation(lat, lng) {
 		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
@@ -48,22 +62,32 @@
 		return await response.json();
 	}
 
+	console.log(initialLat, initialLng);
+
 	async function initMap() {
-		const element = document.getElementById('map');
-		map = await createMap({ element, lat: initialLat, lng: initialLng });
+		mapInstance = createMapProvider();
 
-		await loadStopsAndAddMarkers(initialLat, initialLng);
+		try {
+			await mapInstance.initMap(mapElement, {
+				lat: Number(initialLat),
+				lng: Number(initialLng)
+			});
 
-		const debouncedLoadMarkers = debounce(async () => {
-			const center = map.getCenter();
-			await loadStopsAndAddMarkers(center.lat(), center.lng());
-		}, 300);
+			await loadStopsAndAddMarkers(initialLat, initialLng);
 
-		map.addListener('dragend', debouncedLoadMarkers);
-		map.addListener('zoom_changed', debouncedLoadMarkers);
+			const debouncedLoadMarkers = debounce(async () => {
+				const center = mapInstance.getCenter();
+				await loadStopsAndAddMarkers(center.lat, center.lng);
+			}, 300);
 
-		if (browser) {
-			window.addEventListener('themeChange', handleThemeChange);
+			mapInstance.addListener('dragend', debouncedLoadMarkers);
+			mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
+
+			if (browser) {
+				window.addEventListener('themeChange', handleThemeChange);
+			}
+		} catch (error) {
+			console.error('Error initializing map:', error);
 		}
 	}
 
@@ -86,7 +110,7 @@
 
 	function clearAllMarkers() {
 		markers.forEach(({ marker, overlay, element }) => {
-			marker?.setMap(null);
+			mapInstance.removeMarker(marker);
 
 			if (overlay) {
 				overlay.setMap(null);
@@ -98,12 +122,12 @@
 		markers = [];
 	}
 
-	$: if (stop && map) {
+	$: if (stop && mapInstance) {
 		// TODO: make sure that these markers are deduped. i.e. we shouldn't
 		// show the same stop twice on the map
 		if (stop.id != selectedStopID) {
 			addMarker(stop);
-			map.setCenter({ lat: stop.lat, lng: stop.lon });
+			mapInstance.setCenter({ lat: stop.lat, lng: stop.lon });
 		}
 	}
 
@@ -149,69 +173,29 @@
 			}
 		});
 
-		const marker = new window.google.maps.Marker({
-			map: map,
+		const marker = mapInstance.addMarker({
 			position: { lat: s.lat, lng: s.lon },
-			icon: {
-				url:
-					'data:image/svg+xml;charset=UTF-8,' +
-					encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
-				anchor: new google.maps.Point(0, 0),
-				scaledSize: new google.maps.Size(1, 1)
-			},
-			label: {
-				text: ' ',
-				fontSize: '0px'
-			},
-			optimized: false
+			icon: icon,
+			element: container
 		});
-		const overlay = new google.maps.OverlayView();
-		overlay.setMap(map);
-		overlay.draw = function () {
-			const projection = this.getProjection();
-			const position = projection.fromLatLngToDivPixel(marker.getPosition());
-			container.style.left = position.x - 20 + 'px';
-			container.style.top = position.y - 20 + 'px';
-			container.style.position = 'absolute';
-			this.getPanes().overlayMouseTarget.appendChild(container);
-		};
-		overlay.onRemove = function () {
-			container?.parentNode?.removeChild(container);
-		};
-		markers.push({ s, marker, overlay, element: container });
+
+		markers.push({ s, marker, element: container });
 	}
 
 	function handleThemeChange(event) {
 		const { darkMode } = event.detail;
-		const styles = darkMode ? nightModeStyles() : null;
-		map.setOptions({ styles });
+		mapInstance.setTheme(darkMode ? 'dark' : 'light');
 	}
 
 	function handleLocationObtained(event) {
 		const { latitude, longitude } = event.detail;
-		const userLocation = new google.maps.LatLng(latitude, longitude);
-		map.setCenter(userLocation);
-
-		new google.maps.Marker({
-			map: map,
-			position: userLocation,
-			title: 'Your Location',
-			icon: {
-				path: google.maps.SymbolPath.CIRCLE,
-				scale: 8,
-				fillColor: '#007BFF',
-				fillOpacity: 1,
-				strokeWeight: 2,
-				strokeColor: '#FFFFFF'
-			}
-		});
+		mapInstance.setCenter({ lat: latitude, lng: longitude });
+		mapInstance.addUserLocationMarker({ lat: latitude, lng: longitude });
 	}
 
 	function handleMapTypeChange(event) {
 		mapTypeId = event.detail;
-		if (map) {
-			map.setMapTypeId(mapTypeId);
-		}
+		mapInstance.setMapType(mapTypeId);
 	}
 
 	onMount(async () => {
@@ -230,9 +214,8 @@
 		if (browser) {
 			window.removeEventListener('themeChange', handleThemeChange);
 		}
-		markers.forEach(({ marker, overlay, element }) => {
-			marker.setMap(null);
-			overlay.setMap(null);
+		markers.forEach(({ marker, element }) => {
+			mapInstance.removeMarker(marker);
 			if (element && element.parentNode) {
 				element.parentNode.removeChild(element);
 			}
@@ -240,16 +223,24 @@
 	});
 </script>
 
-<div id="map"></div>
+<div class="map-container">
+	<div id="map" bind:this={mapElement}></div>
 
-{#if selectedTrip && showRouteMap}
-	<RouteMap {map} tripId={selectedTrip.tripId} />
-{/if}
+	{#if selectedTrip && showRouteMap}
+		<RouteMap map={mapInstance} tripId={selectedTrip.tripId} />
+	{/if}
 
-<LocationButton on:locationObtained={handleLocationObtained} />
-<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
+	<LocationButton on:locationObtained={handleLocationObtained} />
+	<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
+</div>
 
 <style>
+	.map-container {
+		position: relative;
+		height: 100%;
+		width: 100%;
+		z-index: 1;
+	}
 	#map {
 		height: 100vh;
 		width: 100%;
