@@ -1,5 +1,5 @@
 import { loadGoogleMapsLibrary, createMap, nightModeStyles } from '$lib/googleMaps';
-
+/* global google */
 export default class GoogleMapProvider {
 	constructor(apiKey) {
 		this.apiKey = apiKey;
