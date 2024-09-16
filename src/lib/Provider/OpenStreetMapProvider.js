@@ -42,14 +42,6 @@ export default class OpenStreetMapProvider {
 		this.map.on(event, callback);
 	}
 
-	setTheme(theme) {
-		console.log('Theme switching not implemented for OSM');
-	}
-
-	setMapType(type) {
-		console.log('Map type switching not implemented for OSM');
-	}
-
 	addUserLocationMarker(latLng) {
 		if (!browser || !this.map) return;
 		this.L.circleMarker([latLng.lat, latLng.lng], {
