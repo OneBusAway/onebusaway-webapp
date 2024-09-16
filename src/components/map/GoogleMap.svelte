@@ -10,7 +10,7 @@
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
+	import { loadGoogleMapsLibrary } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
