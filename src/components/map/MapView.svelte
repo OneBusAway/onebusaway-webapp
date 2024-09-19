@@ -62,8 +62,6 @@
 		return await response.json();
 	}
 
-	console.log(initialLat, initialLng);
-
 	async function initMap() {
 		mapInstance = createMapProvider();
 
