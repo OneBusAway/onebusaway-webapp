@@ -1,6 +1,6 @@
 <script>
 	import { pushState } from '$app/navigation';
-	import GoogleMap from '../components/map/GoogleMap.svelte';
+	import MapView from '../components/map/MapView.svelte';
 	import Header from '../components/navigation/Header.svelte';
 	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
@@ -96,7 +96,7 @@
 	</ModalPane>
 {/if}
 
-<GoogleMap
+<MapView
 	{selectedTrip}
 	{selectedRoute}
 	on:stopSelected={stopSelected}

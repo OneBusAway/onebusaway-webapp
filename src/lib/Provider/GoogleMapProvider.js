@@ -64,6 +64,8 @@ export default class GoogleMapProvider {
 
 	removeMarker(markerObj) {
 		markerObj.marker.setMap(null);
+
+		// TODO: I'm hitting an error here when zooming in.
 		markerObj.overlay.setMap(null);
 	}
 

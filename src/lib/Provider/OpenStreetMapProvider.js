@@ -8,7 +8,6 @@ export default class OpenStreetMapProvider {
 
 	async initMap(element, options) {
 		if (!browser) {
-			console.log('OpenStreetMap initialization skipped on server-side.');
 			return;
 		}
 
@@ -67,5 +66,9 @@ export default class OpenStreetMapProvider {
 	removeMarker(marker) {
 		if (!browser || !this.map) return;
 		this.map.removeLayer(marker);
+	}
+
+	setTheme(theme) {
+		console.log('TODO: implement setTheme for OpenStreetMapProvider', theme);
 	}
 }

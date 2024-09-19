@@ -9,18 +9,14 @@
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { loadGoogleMapsLibrary } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
 
 	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 	import { faBus } from '@fortawesome/free-solid-svg-icons';
-	import {
-		RouteType,
-		routePriorities,
-		prioritizedRouteTypeForDisplay
-	} from '../../config/routeConfig';
+	import { RouteType, routePriorities, prioritizedRouteTypeForDisplay } from '$config/routeConfig';
+
 	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
 	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
 
@@ -61,8 +57,6 @@
 		}
 		return await response.json();
 	}
-
-	console.log(initialLat, initialLng);
 
 	async function initMap() {
 		mapInstance = createMapProvider();
@@ -161,6 +155,7 @@
 			icon = prioritizedRouteTypeForDisplay(prioritizedType);
 		}
 
+		// TODO: move this into GoogleMapProvider
 		new StopMarker({
 			target: container,
 			props: {
@@ -199,9 +194,6 @@
 	}
 
 	onMount(async () => {
-		if (!window.google) {
-			loadGoogleMapsLibrary(apiKey);
-		}
 		await initMap();
 		if (browser) {
 			const darkMode = document.documentElement.classList.contains('dark');
