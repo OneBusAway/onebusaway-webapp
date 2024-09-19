@@ -16,11 +16,8 @@
 
 	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 	import { faBus } from '@fortawesome/free-solid-svg-icons';
-	import {
-		RouteType,
-		routePriorities,
-		prioritizedRouteTypeForDisplay
-	} from '../../config/routeConfig';
+	import { RouteType, routePriorities, prioritizedRouteTypeForDisplay } from '$config/routeConfig';
+
 	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
 	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
 
