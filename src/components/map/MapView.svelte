@@ -195,9 +195,6 @@
 	}
 
 	onMount(async () => {
-		if (!window.google) {
-			loadGoogleMapsLibrary(apiKey);
-		}
 		await initMap();
 		if (browser) {
 			const darkMode = document.documentElement.classList.contains('dark');
