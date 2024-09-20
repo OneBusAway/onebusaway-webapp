@@ -9,7 +9,6 @@
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { loadGoogleMapsLibrary } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
 	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
