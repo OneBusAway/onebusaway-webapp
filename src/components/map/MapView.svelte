@@ -156,6 +156,7 @@
 			icon = prioritizedRouteTypeForDisplay(prioritizedType);
 		}
 
+		// TODO: move this into GoogleMapProvider
 		new StopMarker({
 			target: container,
 			props: {
