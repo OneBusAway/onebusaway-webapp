@@ -5,6 +5,12 @@
 	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
 	import SearchResults from '../components/search/SearchResults.svelte';
+	import {
+		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
+	} from '$env/static/public';
+	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
+
+	const mapProvider = new GoogleMapProvider(apiKey);
 
 	let stop;
 	let selectedTrip = null;
@@ -13,6 +19,7 @@
 	let showRouteMap = false;
 	let showAllStops = false;
 	let searchResults = null;
+	
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -66,7 +73,7 @@
 	}
 </script>
 
-<div class="absolute left-0 right-0 top-0 z-40">
+<div class="absolute top-0 left-0 right-0 z-40">
 	<Header on:searchResults={handleSearch} />
 </div>
 
@@ -91,7 +98,7 @@
 				on:stopSelected={stopSelected}
 			/>
 		{:else}
-			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
+			<p class="dark:text-gray-200 p-4 text-center">No results found.</p>
 		{/if}
 	</ModalPane>
 {/if}
@@ -103,4 +110,5 @@
 	{showRoute}
 	{showRouteMap}
 	{stop}
+	mapProvider={mapProvider}
 />
