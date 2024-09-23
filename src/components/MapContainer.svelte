@@ -2,7 +2,7 @@
 	import MapView from './map/MapView.svelte';
 	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
 	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
-	import { PUBLIC_OBA_MAP_PROVIDER, PUBLIC_OBA_GOOGLE_MAPS_API_KEY } from '$env/static/public';
+	import { PUBLIC_OBA_MAP_PROVIDER, PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey } from '$env/static/public';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	let mapProvider = null;
@@ -10,9 +10,9 @@
 
 	onMount(() => {
 		if (PUBLIC_OBA_MAP_PROVIDER === 'google') {
-			mapProvider = new GoogleMapProvider(PUBLIC_OBA_GOOGLE_MAPS_API_KEY);
+			mapProvider = new GoogleMapProvider(apiKey);
 		} else if (PUBLIC_OBA_MAP_PROVIDER === 'osm') {
-			mapProvider = new OpenStreetMapProvider();
+			mapProvider = new OpenStreetMapProvider(apiKey);
 		} else {
 			console.error('Unknown map provider:');
 		}
