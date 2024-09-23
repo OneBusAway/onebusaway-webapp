@@ -66,17 +66,17 @@ export default class GoogleMapProvider {
 			});
 
 			const overlay = new google.maps.OverlayView();
-			overlay.onAdd = function() {
+			overlay.onAdd = function () {
 				this.getPanes().overlayMouseTarget.appendChild(container);
 			};
-			overlay.draw = function() {
+			overlay.draw = function () {
 				const projection = this.getProjection();
 				const position = projection.fromLatLngToDivPixel(marker.getPosition());
 				container.style.left = position.x - 20 + 'px';
 				container.style.top = position.y - 20 + 'px';
 				container.style.position = 'absolute';
 			};
-			overlay.onRemove = function() {
+			overlay.onRemove = function () {
 				container.parentNode.removeChild(container);
 			};
 			overlay.setMap(this.map);

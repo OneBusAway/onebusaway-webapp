@@ -66,7 +66,7 @@
 	}
 </script>
 
-<div class="absolute top-0 left-0 right-0 z-40">
+<div class="absolute left-0 right-0 top-0 z-40">
 	<Header on:searchResults={handleSearch} />
 </div>
 
@@ -91,7 +91,7 @@
 				on:stopSelected={stopSelected}
 			/>
 		{:else}
-			<p class="dark:text-gray-200 p-4 text-center">No results found.</p>
+			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
 		{/if}
 	</ModalPane>
 {/if}

@@ -2,7 +2,10 @@
 	import MapView from './map/MapView.svelte';
 	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
 	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
-	import { PUBLIC_OBA_MAP_PROVIDER, PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey } from '$env/static/public';
+	import {
+		PUBLIC_OBA_MAP_PROVIDER,
+		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey
+	} from '$env/static/public';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	let mapProvider = null;
