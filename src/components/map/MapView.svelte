@@ -2,23 +2,17 @@
 	import { browser } from '$app/environment';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import {
-		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
-		PUBLIC_OBA_REGION_CENTER_LNG as initialLng,
-		PUBLIC_OBA_MAP_PROVIDER as mapProvider
+		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
-	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
 
 	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 	import { faBus } from '@fortawesome/free-solid-svg-icons';
 	import { RouteType, routePriorities, prioritizedRouteTypeForDisplay } from '$config/routeConfig';
-
-	import GoogleMapProvider from '$lib/Provider/GoogleMapProvider';
-	import OpenStreetMapProvider from '$lib/Provider/OpenStreetMapProvider';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -26,6 +20,7 @@
 	export let showRouteMap = false;
 	export let showAllStops = true;
 	export let stop = null;
+	export let mapProvider = null;
 
 	let selectedStopID = null;
 
@@ -39,17 +34,6 @@
 	let allStops = [];
 	let routeReference = [];
 
-	const createMapProvider = () => {
-		switch (mapProvider) {
-			case 'google':
-				return new GoogleMapProvider(apiKey);
-			case 'osm':
-				return new OpenStreetMapProvider();
-			default:
-				throw new Error(`Unsupported map provider: ${mapProvider}`);
-		}
-	};
-
 	async function loadStopsForLocation(lat, lng) {
 		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
 		if (!response.ok) {
@@ -59,13 +43,13 @@
 	}
 
 	async function initMap() {
-		mapInstance = createMapProvider();
-
 		try {
-			await mapInstance.initMap(mapElement, {
+			await mapProvider.initMap(mapElement, {
 				lat: Number(initialLat),
 				lng: Number(initialLng)
 			});
+
+			mapInstance = mapProvider;
 
 			await loadStopsAndAddMarkers(initialLat, initialLng);
 
@@ -103,15 +87,8 @@
 	}
 
 	function clearAllMarkers() {
-		markers.forEach(({ marker, overlay, element }) => {
-			mapInstance.removeMarker(marker);
-
-			if (overlay) {
-				overlay.setMap(null);
-				overlay.draw = () => {};
-				overlay.onRemove?.();
-			}
-			element?.parentNode?.removeChild(element);
+		markers.forEach((markerObj) => {
+			mapInstance.removeMarker(markerObj);
 		});
 		markers = [];
 	}
@@ -140,8 +117,10 @@
 	}
 
 	function addMarker(s, routeReference) {
-		const container = document.createElement('div');
-		document.body.appendChild(container);
+		if (!mapInstance) {
+			console.error('Map not initialized yet');
+			return;
+		}
 
 		let icon = faBus;
 
@@ -155,26 +134,17 @@
 			icon = prioritizedRouteTypeForDisplay(prioritizedType);
 		}
 
-		// TODO: move this into GoogleMapProvider
-		new StopMarker({
-			target: container,
-			props: {
-				stop: s,
-				icon,
-				onClick: () => {
-					selectedStopID = s.id;
-					dispatch('stopSelected', { stop: s });
-				}
+		const markerObj = mapInstance.addMarker({
+			position: { lat: s.lat, lng: s.lon },
+			icon: icon,
+			stop: s,
+			onClick: () => {
+				selectedStopID = s.id;
+				dispatch('stopSelected', { stop: s });
 			}
 		});
 
-		const marker = mapInstance.addMarker({
-			position: { lat: s.lat, lng: s.lon },
-			icon: icon,
-			element: container
-		});
-
-		markers.push({ s, marker, element: container });
+		markers.push(markerObj);
 	}
 
 	function handleThemeChange(event) {
@@ -206,8 +176,8 @@
 		if (browser) {
 			window.removeEventListener('themeChange', handleThemeChange);
 		}
-		markers.forEach(({ marker, element }) => {
-			mapInstance.removeMarker(marker);
+		markers.forEach(({ markerObj, element }) => {
+			mapProvider.removeMarker(markerObj);
 			if (element && element.parentNode) {
 				element.parentNode.removeChild(element);
 			}

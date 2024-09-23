@@ -1,4 +1,6 @@
 import { loadGoogleMapsLibrary, createMap, nightModeStyles } from '$lib/googleMaps';
+import StopMarker from '$components/map/StopMarker.svelte';
+import { faBus } from '@fortawesome/free-solid-svg-icons';
 /* global google */
 export default class GoogleMapProvider {
 	constructor(apiKey) {
@@ -31,42 +33,73 @@ export default class GoogleMapProvider {
 	}
 
 	addMarker(options) {
-		const marker = new google.maps.Marker({
-			map: this.map,
-			position: options.position,
-			icon: {
-				url:
-					'data:image/svg+xml;charset=UTF-8,' +
-					encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
-				anchor: new google.maps.Point(0, 0),
-				scaledSize: new google.maps.Size(1, 1)
-			},
-			label: {
-				text: ' ',
-				fontSize: '0px'
-			},
-			optimized: false
-		});
+		try {
+			const container = document.createElement('div');
+			document.body.appendChild(container);
 
-		const overlay = new google.maps.OverlayView();
-		overlay.setMap(this.map);
-		overlay.draw = function () {
-			const projection = this.getProjection();
-			const position = projection.fromLatLngToDivPixel(marker.getPosition());
-			options.element.style.left = position.x - 20 + 'px';
-			options.element.style.top = position.y - 20 + 'px';
-			options.element.style.position = 'absolute';
-			this.getPanes().overlayMouseTarget.appendChild(options.element);
-		};
+			new StopMarker({
+				target: container,
+				props: {
+					stop: options.stop,
+					icon: options.icon || faBus,
+					onClick: options.onClick || (() => {})
+				}
+			});
 
-		return { marker, overlay };
+			const marker = new google.maps.Marker({
+				map: this.map,
+				position: options.position,
+				icon: {
+					url:
+						'data:image/svg+xml;charset=UTF-8,' +
+						encodeURIComponent(
+							'<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'
+						),
+					anchor: new google.maps.Point(0, 0),
+					scaledSize: new google.maps.Size(1, 1)
+				},
+				label: {
+					text: ' ',
+					fontSize: '0px'
+				},
+				optimized: false
+			});
+
+			const overlay = new google.maps.OverlayView();
+			overlay.onAdd = function () {
+				this.getPanes().overlayMouseTarget.appendChild(container);
+			};
+			overlay.draw = function () {
+				const projection = this.getProjection();
+				const position = projection.fromLatLngToDivPixel(marker.getPosition());
+				container.style.left = position.x - 20 + 'px';
+				container.style.top = position.y - 20 + 'px';
+				container.style.position = 'absolute';
+			};
+			overlay.onRemove = function () {
+				container.parentNode.removeChild(container);
+			};
+			overlay.setMap(this.map);
+
+			return { marker, overlay, element: container };
+		} catch (error) {
+			console.error('Error adding marker:', error);
+			return null;
+		}
 	}
 
 	removeMarker(markerObj) {
-		markerObj.marker.setMap(null);
+		if (!markerObj) return;
 
-		// TODO: I'm hitting an error here when zooming in.
-		markerObj.overlay.setMap(null);
+		if (markerObj.marker) {
+			markerObj.marker.setMap(null);
+		}
+		if (markerObj.overlay) {
+			markerObj.overlay.setMap(null);
+		}
+		if (markerObj.element && markerObj.element.parentNode) {
+			markerObj.element.parentNode.removeChild(markerObj.element);
+		}
 	}
 
 	setCenter(latLng) {

@@ -1,10 +1,10 @@
 <script>
 	import { pushState } from '$app/navigation';
-	import MapView from '../components/map/MapView.svelte';
 	import Header from '../components/navigation/Header.svelte';
 	import ModalPane from '../components/navigation/ModalPane.svelte';
 	import StopPane from '../components/oba/StopPane.svelte';
 	import SearchResults from '../components/search/SearchResults.svelte';
+	import MapContainer from '$components/MapContainer.svelte';
 
 	let stop;
 	let selectedTrip = null;
@@ -96,7 +96,7 @@
 	</ModalPane>
 {/if}
 
-<MapView
+<MapContainer
 	{selectedTrip}
 	{selectedRoute}
 	on:stopSelected={stopSelected}
