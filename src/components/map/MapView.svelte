@@ -87,15 +87,8 @@
 	}
 
 	function clearAllMarkers() {
-		markers.forEach(({ marker, overlay, element }) => {
-			mapInstance.removeMarker(marker);
-
-			if (overlay) {
-				overlay.setMap(null);
-				overlay.draw = () => {};
-				overlay.onRemove?.();
-			}
-			element?.parentNode?.removeChild(element);
+		markers.forEach((markerObj) => {
+			mapInstance.removeMarker(markerObj);
 		});
 		markers = [];
 	}

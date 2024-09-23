@@ -66,15 +66,20 @@ export default class GoogleMapProvider {
 			});
 
 			const overlay = new google.maps.OverlayView();
-			overlay.setMap(this.map);
-			overlay.draw = function () {
+			overlay.onAdd = function() {
+				this.getPanes().overlayMouseTarget.appendChild(container);
+			};
+			overlay.draw = function() {
 				const projection = this.getProjection();
 				const position = projection.fromLatLngToDivPixel(marker.getPosition());
 				container.style.left = position.x - 20 + 'px';
 				container.style.top = position.y - 20 + 'px';
 				container.style.position = 'absolute';
-				this.getPanes().overlayMouseTarget.appendChild(container);
 			};
+			overlay.onRemove = function() {
+				container.parentNode.removeChild(container);
+			};
+			overlay.setMap(this.map);
 
 			return { marker, overlay, element: container };
 		} catch (error) {
