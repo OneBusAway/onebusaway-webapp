@@ -41,28 +41,11 @@ export default class GoogleMapProvider {
 				target: container,
 				props: {
 					stop: options.stop,
-					icon: options.icon || faBus,
-					onClick: options.onClick || (() => {})
+					icon: faBus,
+					onClick: () => {
+						options.onClick && options.onClick();
+					}
 				}
-			});
-
-			const marker = new google.maps.Marker({
-				map: this.map,
-				position: options.position,
-				icon: {
-					url:
-						'data:image/svg+xml;charset=UTF-8,' +
-						encodeURIComponent(
-							'<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'
-						),
-					anchor: new google.maps.Point(0, 0),
-					scaledSize: new google.maps.Size(1, 1)
-				},
-				label: {
-					text: ' ',
-					fontSize: '0px'
-				},
-				optimized: false
 			});
 
 			const overlay = new google.maps.OverlayView();
@@ -71,17 +54,18 @@ export default class GoogleMapProvider {
 			};
 			overlay.draw = function () {
 				const projection = this.getProjection();
-				const position = projection.fromLatLngToDivPixel(marker.getPosition());
+				const position = projection.fromLatLngToDivPixel(options.position);
 				container.style.left = position.x - 20 + 'px';
 				container.style.top = position.y - 20 + 'px';
 				container.style.position = 'absolute';
+				container.style.zIndex = '1000';
 			};
 			overlay.onRemove = function () {
 				container.parentNode.removeChild(container);
 			};
 			overlay.setMap(this.map);
 
-			return { marker, overlay, element: container };
+			return { overlay, element: container };
 		} catch (error) {
 			console.error('Error adding marker:', error);
 			return null;

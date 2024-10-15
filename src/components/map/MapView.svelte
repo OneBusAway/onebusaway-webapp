@@ -21,7 +21,7 @@
 	export let showAllStops = true;
 	export let stop = null;
 	export let mapProvider = null;
-
+	export let mapSource = null;
 	let selectedStopID = null;
 
 	const dispatch = createEventDispatcher();
@@ -189,10 +189,13 @@
 	<div id="map" bind:this={mapElement}></div>
 
 	{#if selectedTrip && showRouteMap}
-		<RouteMap map={mapInstance} tripId={selectedTrip.tripId} />
+		<RouteMap mapProvider={mapInstance} {mapSource} tripId={selectedTrip.tripId} />
 	{/if}
+</div>
 
+<div class="controls">
 	<LocationButton on:locationObtained={handleLocationObtained} />
+	<!-- TODO: MAKE THE MAP TYPE WORK IN OSM MAP-->
 	<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
 </div>
 

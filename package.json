@@ -39,6 +39,8 @@
 		"@fortawesome/free-regular-svg-icons": "^6.6.0",
 		"@googlemaps/js-api-loader": "^1.16.8",
 		"leaflet": "^1.9.4",
-		"onebusaway-sdk": "^1.0.1"
+		"leaflet-polylinedecorator": "^1.6.0",
+		"onebusaway-sdk": "^1.0.1",
+		"polyline-encoded": "^0.0.9"
 	}
 }

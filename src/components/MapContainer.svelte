@@ -7,15 +7,19 @@
 		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey
 	} from '$env/static/public';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { MapSource } from './../config/mapSource.js';
 
 	let mapProvider = null;
+	let mapSource = null;
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		if (PUBLIC_OBA_MAP_PROVIDER === 'google') {
+		if (PUBLIC_OBA_MAP_PROVIDER === MapSource.Google) {
 			mapProvider = new GoogleMapProvider(apiKey);
-		} else if (PUBLIC_OBA_MAP_PROVIDER === 'osm') {
+			mapSource = MapSource.Google;
+		} else if (PUBLIC_OBA_MAP_PROVIDER === MapSource.OpenStreetMap) {
 			mapProvider = new OpenStreetMapProvider(apiKey);
+			mapSource = MapSource.OpenStreetMap;
 		} else {
 			console.error('Unknown map provider:');
 		}
@@ -29,6 +33,7 @@
 {#if mapProvider}
 	<MapView
 		{mapProvider}
+		{mapSource}
 		{...$$props}
 		on:stopSelected={forward}
 		on:selectedTrip={forward}
