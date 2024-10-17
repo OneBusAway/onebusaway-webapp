@@ -1,29 +1,30 @@
-# create-svelte
+# OneBusAway WebApp
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+This is the next-generation OneBusAway web application, built on top of [SvelteKit](https://kit.svelte.dev). It is designed to replace the [onebusaway-enterprise-webapp](https://github.com/OneBusAway/onebusaway-application-modules) project. This project is under active development!
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
 ```bash
+npm install
+cp .env.example .env
+# edit .env with your editor of choice
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
+
+## `.env` File Keys
+
+See `.env.example` for an example of the required keys and values.
+
+- `PUBLIC_OBA_REGION_NAME` - string: displayed in the header.
+- `PUBLIC_OBA_LOGO_URL` - string: The URL of your transit agency's logo.
+- `PUBLIC_OBA_SEARCH_ENABLED` - boolean: whether the search APIs in newer OBA REST API versions are supported.
+- `PUBLIC_OBA_SERVER_URL` - string: Your OBA API server's URL.
+- `PUBLIC_OBA_REGION_CENTER_LAT` - float: The region's center latitude.
+- `PUBLIC_OBA_REGION_CENTER_LNG` - float: The region's center longitude.
+- `PUBLIC_OBA_GOOGLE_MAPS_API_KEY` - string: Your Google API key. Leave this blank if you don't have one.
+- `PRIVATE_OBA_API_KEY` - string: Your OneBusAway REST API server key.
+- `PUBLIC_OBA_MAP_PROVIDER` - string: Use "osm" for OpenStreetMap or "google" for Google Maps.
+- `PUBLIC_NAV_BAR_LINKS` - JSON string: A dictionary of the links displayed across the navigation bar.
 
 ## Building
 
