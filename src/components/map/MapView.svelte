@@ -1,26 +1,18 @@
 <script>
-	/* global google */
 	import { browser } from '$app/environment';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import {
-		PUBLIC_OBA_GOOGLE_MAPS_API_KEY as apiKey,
 		PUBLIC_OBA_REGION_CENTER_LAT as initialLat,
 		PUBLIC_OBA_REGION_CENTER_LNG as initialLng
 	} from '$env/static/public';
 
 	import { debounce } from '$lib/utils';
-	import { createMap, loadGoogleMapsLibrary, nightModeStyles } from '$lib/googleMaps';
 	import LocationButton from '$lib/LocationButton/LocationButton.svelte';
-	import StopMarker from './StopMarker.svelte';
 	import RouteMap from './RouteMap.svelte';
 
 	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 	import { faBus } from '@fortawesome/free-solid-svg-icons';
-	import {
-		RouteType,
-		routePriorities,
-		prioritizedRouteTypeForDisplay
-	} from '../../config/routeConfig';
+	import { RouteType, routePriorities, prioritizedRouteTypeForDisplay } from '$config/routeConfig';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -28,13 +20,15 @@
 	export let showRouteMap = false;
 	export let showAllStops = true;
 	export let stop = null;
-
+	export let mapProvider = null;
+	export let mapSource = null;
 	let selectedStopID = null;
 
 	const dispatch = createEventDispatcher();
 
-	let map = null;
+	let mapInstance = null;
 	let mapTypeId = 'roadmap';
+	let mapElement;
 
 	let markers = [];
 	let allStops = [];
@@ -49,21 +43,29 @@
 	}
 
 	async function initMap() {
-		const element = document.getElementById('map');
-		map = await createMap({ element, lat: initialLat, lng: initialLng });
+		try {
+			await mapProvider.initMap(mapElement, {
+				lat: Number(initialLat),
+				lng: Number(initialLng)
+			});
 
-		await loadStopsAndAddMarkers(initialLat, initialLng);
+			mapInstance = mapProvider;
 
-		const debouncedLoadMarkers = debounce(async () => {
-			const center = map.getCenter();
-			await loadStopsAndAddMarkers(center.lat(), center.lng());
-		}, 300);
+			await loadStopsAndAddMarkers(initialLat, initialLng);
 
-		map.addListener('dragend', debouncedLoadMarkers);
-		map.addListener('zoom_changed', debouncedLoadMarkers);
+			const debouncedLoadMarkers = debounce(async () => {
+				const center = mapInstance.getCenter();
+				await loadStopsAndAddMarkers(center.lat, center.lng);
+			}, 300);
 
-		if (browser) {
-			window.addEventListener('themeChange', handleThemeChange);
+			mapInstance.addListener('dragend', debouncedLoadMarkers);
+			mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
+
+			if (browser) {
+				window.addEventListener('themeChange', handleThemeChange);
+			}
+		} catch (error) {
+			console.error('Error initializing map:', error);
 		}
 	}
 
@@ -85,25 +87,18 @@
 	}
 
 	function clearAllMarkers() {
-		markers.forEach(({ marker, overlay, element }) => {
-			marker?.setMap(null);
-
-			if (overlay) {
-				overlay.setMap(null);
-				overlay.draw = () => {};
-				overlay.onRemove?.();
-			}
-			element?.parentNode?.removeChild(element);
+		markers.forEach((markerObj) => {
+			mapInstance.removeMarker(markerObj);
 		});
 		markers = [];
 	}
 
-	$: if (stop && map) {
+	$: if (stop && mapInstance) {
 		// TODO: make sure that these markers are deduped. i.e. we shouldn't
 		// show the same stop twice on the map
 		if (stop.id != selectedStopID) {
 			addMarker(stop);
-			map.setCenter({ lat: stop.lat, lng: stop.lon });
+			mapInstance.setCenter({ lat: stop.lat, lng: stop.lon });
 		}
 	}
 
@@ -122,8 +117,10 @@
 	}
 
 	function addMarker(s, routeReference) {
-		const container = document.createElement('div');
-		document.body.appendChild(container);
+		if (!mapInstance) {
+			console.error('Map not initialized yet');
+			return;
+		}
 
 		let icon = faBus;
 
@@ -137,87 +134,36 @@
 			icon = prioritizedRouteTypeForDisplay(prioritizedType);
 		}
 
-		new StopMarker({
-			target: container,
-			props: {
-				stop: s,
-				icon,
-				onClick: () => {
-					selectedStopID = s.id;
-					dispatch('stopSelected', { stop: s });
-				}
+		const markerObj = mapInstance.addMarker({
+			position: { lat: s.lat, lng: s.lon },
+			icon: icon,
+			stop: s,
+			onClick: () => {
+				selectedStopID = s.id;
+				dispatch('stopSelected', { stop: s });
 			}
 		});
 
-		const marker = new window.google.maps.Marker({
-			map: map,
-			position: { lat: s.lat, lng: s.lon },
-			icon: {
-				url:
-					'data:image/svg+xml;charset=UTF-8,' +
-					encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
-				anchor: new google.maps.Point(0, 0),
-				scaledSize: new google.maps.Size(1, 1)
-			},
-			label: {
-				text: ' ',
-				fontSize: '0px'
-			},
-			optimized: false
-		});
-		const overlay = new google.maps.OverlayView();
-		overlay.setMap(map);
-		overlay.draw = function () {
-			const projection = this.getProjection();
-			const position = projection.fromLatLngToDivPixel(marker.getPosition());
-			container.style.left = position.x - 20 + 'px';
-			container.style.top = position.y - 20 + 'px';
-			container.style.position = 'absolute';
-			this.getPanes().overlayMouseTarget.appendChild(container);
-		};
-		overlay.onRemove = function () {
-			container?.parentNode?.removeChild(container);
-		};
-		markers.push({ s, marker, overlay, element: container });
+		markers.push(markerObj);
 	}
 
 	function handleThemeChange(event) {
 		const { darkMode } = event.detail;
-		const styles = darkMode ? nightModeStyles() : null;
-		map.setOptions({ styles });
+		mapInstance.setTheme(darkMode ? 'dark' : 'light');
 	}
 
 	function handleLocationObtained(event) {
 		const { latitude, longitude } = event.detail;
-		const userLocation = new google.maps.LatLng(latitude, longitude);
-		map.setCenter(userLocation);
-
-		new google.maps.Marker({
-			map: map,
-			position: userLocation,
-			title: 'Your Location',
-			icon: {
-				path: google.maps.SymbolPath.CIRCLE,
-				scale: 8,
-				fillColor: '#007BFF',
-				fillOpacity: 1,
-				strokeWeight: 2,
-				strokeColor: '#FFFFFF'
-			}
-		});
+		mapInstance.setCenter({ lat: latitude, lng: longitude });
+		mapInstance.addUserLocationMarker({ lat: latitude, lng: longitude });
 	}
 
 	function handleMapTypeChange(event) {
 		mapTypeId = event.detail;
-		if (map) {
-			map.setMapTypeId(mapTypeId);
-		}
+		mapInstance.setMapType(mapTypeId);
 	}
 
 	onMount(async () => {
-		if (!window.google) {
-			loadGoogleMapsLibrary(apiKey);
-		}
 		await initMap();
 		if (browser) {
 			const darkMode = document.documentElement.classList.contains('dark');
@@ -230,9 +176,8 @@
 		if (browser) {
 			window.removeEventListener('themeChange', handleThemeChange);
 		}
-		markers.forEach(({ marker, overlay, element }) => {
-			marker.setMap(null);
-			overlay.setMap(null);
+		markers.forEach(({ markerObj, element }) => {
+			mapProvider.removeMarker(markerObj);
 			if (element && element.parentNode) {
 				element.parentNode.removeChild(element);
 			}
@@ -240,16 +185,27 @@
 	});
 </script>
 
-<div id="map"></div>
+<div class="map-container">
+	<div id="map" bind:this={mapElement}></div>
 
-{#if selectedTrip && showRouteMap}
-	<RouteMap {map} tripId={selectedTrip.tripId} />
-{/if}
+	{#if selectedTrip && showRouteMap}
+		<RouteMap mapProvider={mapInstance} {mapSource} tripId={selectedTrip.tripId} />
+	{/if}
+</div>
 
-<LocationButton on:locationObtained={handleLocationObtained} />
-<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
+<div class="controls">
+	<LocationButton on:locationObtained={handleLocationObtained} />
+	<!-- TODO: MAKE THE MAP TYPE WORK IN OSM MAP-->
+	<MapTypeButton {mapTypeId} on:mapTypeChanged={handleMapTypeChange} />
+</div>
 
 <style>
+	.map-container {
+		position: relative;
+		height: 100%;
+		width: 100%;
+		z-index: 1;
+	}
 	#map {
 		height: 100vh;
 		width: 100%;
