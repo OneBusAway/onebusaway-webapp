@@ -39,9 +39,12 @@
 	class="bg-blur-md flex items-center justify-between border-b border-gray-500 bg-white/80 px-4 dark:bg-black dark:text-white"
 >
 	<div class="flex items-center justify-center gap-4 px-2 py-2">
-		<div>
-			<a href="/">
+		<div class='flex items-center justify-center gap-x-2'>
+			<a href="/" class='block'>
 				<img src={PUBLIC_OBA_LOGO_URL} alt={PUBLIC_OBA_REGION_NAME} class="h-10 rounded-sm" />
+			</a>
+			<a href="/" class='text-xl block font-extrabold'>
+				{PUBLIC_OBA_REGION_NAME}
 			</a>
 		</div>
 
@@ -49,7 +52,7 @@
 			<div class="mx-auto max-w-md">
 				<label
 					for="default-search"
-					class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">Search</label
+					class="sr-only">Search</label
 				>
 				<div class="relative">
 					<div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
