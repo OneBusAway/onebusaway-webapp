@@ -2,31 +2,10 @@
 	import {
 		PUBLIC_OBA_REGION_NAME,
 		PUBLIC_OBA_LOGO_URL,
-		PUBLIC_OBA_SEARCH_ENABLED,
 		PUBLIC_NAV_BAR_LINKS
 	} from '$env/static/public';
+
 	import ThemeSwitcher from '$lib/ThemeSwitch/ThemeSwitcher.svelte';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
-	let searchInput = '';
-
-	async function handleSearch() {
-		try {
-			const response = await fetch(`/api/oba/search?query=${encodeURIComponent(searchInput)}`);
-			const results = await response.json();
-			dispatch('searchResults', results);
-		} catch (error) {
-			console.error('Error fetching search results:', error);
-		}
-	}
-
-	const onHandleSearch = (event) => {
-		if (event.key === 'Enter') {
-			handleSearch();
-		}
-	};
 
 	let headerLinks = null;
 
@@ -39,51 +18,14 @@
 	class="bg-blur-md flex items-center justify-between border-b border-gray-500 bg-white/80 px-4 dark:bg-black dark:text-white"
 >
 	<div class="flex items-center justify-center gap-4 px-2 py-2">
-		<div class='flex items-center justify-center gap-x-2'>
-			<a href="/" class='block'>
+		<div class="flex items-center justify-center gap-x-2">
+			<a href="/" class="block">
 				<img src={PUBLIC_OBA_LOGO_URL} alt={PUBLIC_OBA_REGION_NAME} class="h-10 rounded-sm" />
 			</a>
-			<a href="/" class='text-xl block font-extrabold'>
+			<a href="/" class="block text-xl font-extrabold">
 				{PUBLIC_OBA_REGION_NAME}
 			</a>
 		</div>
-
-		{#if PUBLIC_OBA_SEARCH_ENABLED === 'true'}
-			<div class="mx-auto max-w-md">
-				<label
-					for="default-search"
-					class="sr-only">Search</label
-				>
-				<div class="relative">
-					<div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-						<svg
-							class="h-4 w-4 text-gray-500 dark:text-gray-400"
-							aria-hidden="true"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 20 20"
-						>
-							<path
-								stroke="currentColor"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-							/>
-						</svg>
-					</div>
-					<input
-						type="search"
-						id="search"
-						class="block w-full rounded-full border border-gray-300 bg-gray-50 p-2 ps-10 text-sm text-gray-900 dark:border-gray-600 dark:placeholder-gray-400"
-						placeholder="Search a stop or route"
-						required
-						bind:value={searchInput}
-						on:keydown={onHandleSearch}
-					/>
-				</div>
-			</div>
-		{/if}
 
 		<div class="flex gap-x-4">
 			{#each Object.entries(headerLinks) as [key, value]}

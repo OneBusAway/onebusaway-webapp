@@ -1,9 +1,9 @@
 <script>
 	import { pushState } from '$app/navigation';
-	import Header from '../components/navigation/Header.svelte';
-	import ModalPane from '../components/navigation/ModalPane.svelte';
-	import StopPane from '../components/oba/StopPane.svelte';
-	import SearchResults from '../components/search/SearchResults.svelte';
+	import Header from '$components/navigation/Header.svelte';
+	import SearchPane from '$components/search/SearchPane.svelte';
+	import ModalPane from '$components/navigation/ModalPane.svelte';
+	import StopPane from '$components/oba/StopPane.svelte';
 	import MapContainer from '$components/MapContainer.svelte';
 
 	let stop;
@@ -12,7 +12,6 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
-	let searchResults = null;
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -41,13 +40,6 @@
 		}
 	}
 
-	function routeSelected(event) {
-		const route = event.detail.route;
-		const routeId = route?.id;
-		alert(`TODO: show route ${routeId}`);
-		closeModal();
-	}
-
 	function handleUpdateRouteMap(event) {
 		showRouteMap = event.detail.show;
 		showAllStops = !event.detail.show;
@@ -57,17 +49,14 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
-	function handleSearch(event) {
-		searchResults = event.detail;
-	}
-
-	function closeModal() {
-		searchResults = null;
-	}
 </script>
 
 <div class="absolute left-0 right-0 top-0 z-40">
-	<Header on:searchResults={handleSearch} />
+	<Header />
+
+	<div class="ml-4 mt-4 md:w-64">
+		<SearchPane />
+	</div>
 </div>
 
 {#if stop}
@@ -79,20 +68,6 @@
 			on:updateRouteMap={handleUpdateRouteMap}
 			on:showAllStops={handleShowAllStops}
 		/>
-	</ModalPane>
-{/if}
-
-{#if searchResults}
-	<ModalPane on:close={closeModal}>
-		{#if searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0}
-			<SearchResults
-				{searchResults}
-				on:routeSelected={routeSelected}
-				on:stopSelected={stopSelected}
-			/>
-		{:else}
-			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
-		{/if}
 	</ModalPane>
 {/if}
 
