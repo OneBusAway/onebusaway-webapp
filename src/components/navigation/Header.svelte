@@ -2,7 +2,8 @@
 	import {
 		PUBLIC_OBA_REGION_NAME,
 		PUBLIC_OBA_LOGO_URL,
-		PUBLIC_OBA_SEARCH_ENABLED
+		PUBLIC_OBA_SEARCH_ENABLED,
+		PUBLIC_NAV_BAR_LINKS
 	} from '$env/static/public';
 	import ThemeSwitcher from '$lib/ThemeSwitch/ThemeSwitcher.svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -26,6 +27,12 @@
 			handleSearch();
 		}
 	};
+
+	let headerLinks = null;
+
+	if (PUBLIC_NAV_BAR_LINKS) {
+		headerLinks = JSON.parse(PUBLIC_NAV_BAR_LINKS);
+	}
 </script>
 
 <div
@@ -37,6 +44,7 @@
 				<img src={PUBLIC_OBA_LOGO_URL} alt={PUBLIC_OBA_REGION_NAME} class="h-10 rounded-sm" />
 			</a>
 		</div>
+
 		{#if PUBLIC_OBA_SEARCH_ENABLED === 'true'}
 			<div class="mx-auto max-w-md">
 				<label
@@ -73,6 +81,16 @@
 				</div>
 			</div>
 		{/if}
+
+		<div class="flex gap-x-4">
+			{#each Object.entries(headerLinks) as [key, value]}
+				<div class="rounded-md border bg-white/80 dark:bg-gray-800">
+					<a href={value} class="block px-2 py-1 font-semibold text-gray-900 dark:text-white"
+						>{key}</a
+					>
+				</div>
+			{/each}
+		</div>
 	</div>
 	<div>
 		<ThemeSwitcher />
