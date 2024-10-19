@@ -135,5 +135,4 @@ export default class GoogleMapProvider {
 			west: sw.lng()
 		};
 	}
-
 }

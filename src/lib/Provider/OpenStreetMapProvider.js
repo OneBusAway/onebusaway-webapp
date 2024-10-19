@@ -151,8 +151,6 @@ export default class OpenStreetMapProvider {
 		}
 	}
 
-
-
 	getBoundingBox() {
 		const bounds = this.map.getBounds();
 		const ne = bounds.getNorthEast();
