@@ -66,7 +66,11 @@
 		const key = cacheKey(zoomLevel, boundingBox);
 
 		if (stopsCache.has(key)) {
+			console.debug("Stop cache hit: ", key);
 			return stopsCache.get(key);
+		}
+		else {
+			console.debug("Stop cache miss: ", key);
 		}
 
 		const response = await fetch(
