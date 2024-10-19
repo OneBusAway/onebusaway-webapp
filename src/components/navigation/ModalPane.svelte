@@ -42,7 +42,7 @@
 <style lang="postcss">
 	.modal-pane {
 		@apply absolute bottom-0 left-0 max-h-[40rem] w-[25em] overflow-y-scroll bg-transparent px-2 shadow-lg md:w-full md:max-w-prose lg:w-full;
-		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-[#F3F2F8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 dark:bg-black;
+		@apply rounded-lg border-b-[1px] border-[#C6C6C8] bg-[#F3F2F8] dark:border-[1px] dark:border-[#C6C6C8] dark:border-opacity-15 dark:bg-neutral-800;
 	}
 
 	.modal-content {
