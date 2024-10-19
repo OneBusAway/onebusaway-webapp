@@ -33,13 +33,54 @@
 	let markers = [];
 	let allStops = [];
 	let routeReference = [];
+	let stopsCache = new Map();
 
-	async function loadStopsForLocation(lat, lng) {
-		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
+	function cacheKey(zoomLevel, boundingBox) {
+		const roundedBox = {
+			north: boundingBox.north.toFixed(4),
+			south: boundingBox.south.toFixed(4),
+			east: boundingBox.east.toFixed(4),
+			west: boundingBox.west.toFixed(4)
+		};
+
+		return `${roundedBox.north}_${roundedBox.south}_${roundedBox.east}_${roundedBox.west}_${zoomLevel}`;
+	}
+
+	function getBoundingBox() {
+		if (!mapProvider) {
+			throw new Error('Map provider is not initialized');
+		}
+		return mapProvider.getBoundingBox();
+	}
+
+	async function loadStopsForLocation(lat, lng, zoomLevel, firstCall = false) {
+		if (firstCall) {
+			const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&radius=2500`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch locations');
+			}
+			return await response.json();
+		}
+
+		const boundingBox = getBoundingBox();
+		const key = cacheKey(zoomLevel, boundingBox);
+
+		if (stopsCache.has(key)) {
+			return stopsCache.get(key);
+		}
+
+		const response = await fetch(
+			`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&latSpan=${boundingBox.north - boundingBox.south}&lngSpan=${boundingBox.east - boundingBox.west}&radius=1000`
+		);
+
 		if (!response.ok) {
 			throw new Error('Failed to fetch locations');
 		}
-		return await response.json();
+
+		const stopsForLocation = await response.json();
+		stopsCache.set(key, stopsForLocation);
+
+		return stopsForLocation;
 	}
 
 	async function initMap() {
@@ -51,11 +92,13 @@
 
 			mapInstance = mapProvider;
 
-			await loadStopsAndAddMarkers(initialLat, initialLng);
+			await loadStopsAndAddMarkers(initialLat, initialLng, true);
 
 			const debouncedLoadMarkers = debounce(async () => {
 				const center = mapInstance.getCenter();
-				await loadStopsAndAddMarkers(center.lat, center.lng);
+				const zoomLevel = mapInstance.map.getZoom();
+
+				await loadStopsAndAddMarkers(center.lat, center.lng, false, zoomLevel);
 			}, 300);
 
 			mapInstance.addListener('dragend', debouncedLoadMarkers);
@@ -69,15 +112,14 @@
 		}
 	}
 
-	async function loadStopsAndAddMarkers(lat, lng) {
-		const json = await loadStopsForLocation(lat, lng);
-		const newStops = json.data.list;
-		routeReference = json.data.references?.routes || [];
+	async function loadStopsAndAddMarkers(lat, lng, firstCall = false, zoomLevel = 15) {
+		const stopsData = await loadStopsForLocation(lat, lng, zoomLevel, firstCall);
+		const newStops = stopsData.data.list;
+		routeReference = stopsData.data.references.routes || [];
 
 		allStops = [...new Map([...allStops, ...newStops].map((stop) => [stop.id, stop])).values()];
 
 		clearAllMarkers();
-
 		if (showRoute && selectedRoute) {
 			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
 			stopsToShow.forEach((s) => addMarker(s, routeReference));
