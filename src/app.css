@@ -12,11 +12,11 @@
 	}
 
 	.h1 {
-		@apply mb-4 text-2xl font-semibold text-[#86858B] dark:text-gray-300;
+		@apply mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-300;
 	}
 
 	.h2 {
-		@apply mb-4 text-xl font-semibold text-[#86858B] dark:text-gray-300;
+		@apply mb-4 text-xl font-semibold text-gray-900 dark:text-gray-300;
 	}
 
 	.h3 {
