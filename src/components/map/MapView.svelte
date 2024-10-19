@@ -37,10 +37,10 @@
 
 	function cacheKey(zoomLevel, boundingBox) {
 		const roundedBox = {
-			north: boundingBox.north.toFixed(4),
-			south: boundingBox.south.toFixed(4),
-			east: boundingBox.east.toFixed(4),
-			west: boundingBox.west.toFixed(4)
+			north: boundingBox.north.toFixed(1),
+			south: boundingBox.south.toFixed(1),
+			east: boundingBox.east.toFixed(1),
+			west: boundingBox.west.toFixed(1)
 		};
 
 		return `${roundedBox.north}_${roundedBox.south}_${roundedBox.east}_${roundedBox.west}_${zoomLevel}`;
@@ -66,15 +66,14 @@
 		const key = cacheKey(zoomLevel, boundingBox);
 
 		if (stopsCache.has(key)) {
-			console.debug("Stop cache hit: ", key);
+			console.debug('Stop cache hit: ', key);
 			return stopsCache.get(key);
-		}
-		else {
-			console.debug("Stop cache miss: ", key);
+		} else {
+			console.debug('Stop cache miss: ', key);
 		}
 
 		const response = await fetch(
-			`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&latSpan=${boundingBox.north - boundingBox.south}&lngSpan=${boundingBox.east - boundingBox.west}&radius=1000`
+			`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&latSpan=${boundingBox.north - boundingBox.south}&lngSpan=${boundingBox.east - boundingBox.west}&radius=1500`
 		);
 
 		if (!response.ok) {
