@@ -1,10 +1,13 @@
 <script>
 	import { pushState } from '$app/navigation';
-	import Header from '../components/navigation/Header.svelte';
-	import ModalPane from '../components/navigation/ModalPane.svelte';
-	import StopPane from '../components/oba/StopPane.svelte';
-	import SearchResults from '../components/search/SearchResults.svelte';
+	import Header from '$components/navigation/Header.svelte';
+	import SearchPane from '$components/search/SearchPane.svelte';
+	import ModalPane from '$components/navigation/ModalPane.svelte';
+	import StopPane from '$components/oba/StopPane.svelte';
 	import MapContainer from '$components/MapContainer.svelte';
+	import RouteModal from '$components/navigation/RouteModal.svelte';
+	import { cleanupInfoWindow, cleanupStopMarkers } from '$lib/mapUtils';
+	import { MapSource } from '$config/mapSource';
 
 	let stop;
 	let selectedTrip = null;
@@ -12,7 +15,11 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
-	let searchResults = null;
+	let showRouteModal;
+	let mapProvider = null;
+	let mapSource = null;
+	let polylines = [];
+	let stops = [];
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -20,10 +27,16 @@
 	}
 
 	function closePane() {
+		if (polylines) {
+			clearPolylines();
+			cleanupStopMarkers(mapSource);
+			cleanupInfoWindow();
+		}
 		stop = null;
 		selectedTrip = null;
 		selectedRoute = null;
 		showRoute = false;
+		showRouteModal = false;
 	}
 
 	function tripSelected(event) {
@@ -41,13 +54,6 @@
 		}
 	}
 
-	function routeSelected(event) {
-		const route = event.detail.route;
-		const routeId = route?.id;
-		alert(`TODO: show route ${routeId}`);
-		closeModal();
-	}
-
 	function handleUpdateRouteMap(event) {
 		showRouteMap = event.detail.show;
 		showAllStops = !event.detail.show;
@@ -57,17 +63,46 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
-	function handleSearch(event) {
-		searchResults = event.detail;
+
+	function handleRouteSelected(event) {
+		selectedRoute = event.detail.route;
+		polylines = event.detail.polylines;
+		stops = event.detail.stops;
+		showRouteModal = true;
 	}
 
-	function closeModal() {
-		searchResults = null;
+	function clearPolylines() {
+		switch (mapSource) {
+			case MapSource.Google: {
+				polylines.map((p) => {
+					p.setMap(null);
+				});
+				break;
+			}
+			case MapSource.OpenStreetMap: {
+				polylines.map((p) => {
+					mapProvider.removePolyline(p);
+				});
+				break;
+			}
+		}
+
+		cleanupStopMarkers(mapSource);
+		selectedRoute = null;
 	}
 </script>
 
 <div class="absolute left-0 right-0 top-0 z-40">
-	<Header on:searchResults={handleSearch} />
+	<Header />
+
+	<div class="ml-4 mt-4 md:w-64">
+		<SearchPane
+			{mapProvider}
+			{mapSource}
+			on:routeSelected={handleRouteSelected}
+			on:clearResults={clearPolylines}
+		/>
+	</div>
 </div>
 
 {#if stop}
@@ -82,17 +117,9 @@
 	</ModalPane>
 {/if}
 
-{#if searchResults}
-	<ModalPane on:close={closeModal}>
-		{#if searchResults.stopSearchResults?.list?.length > 0 || searchResults.routeSearchResults?.list?.length > 0}
-			<SearchResults
-				{searchResults}
-				on:routeSelected={routeSelected}
-				on:stopSelected={stopSelected}
-			/>
-		{:else}
-			<p class="p-4 text-center dark:text-gray-200">No results found.</p>
-		{/if}
+{#if showRouteModal}
+	<ModalPane on:close={closePane}>
+		<RouteModal {mapProvider} {mapSource} {stops} {selectedRoute} />
 	</ModalPane>
 {/if}
 
@@ -103,4 +130,6 @@
 	{showRoute}
 	{showRouteMap}
 	{stop}
+	bind:mapProvider
+	bind:mapSource
 />

@@ -1,7 +1,6 @@
 import { loadGoogleMapsLibrary, createMap, nightModeStyles } from '$lib/googleMaps';
 import StopMarker from '$components/map/StopMarker.svelte';
 import { faBus } from '@fortawesome/free-solid-svg-icons';
-/* global google */
 export default class GoogleMapProvider {
 	constructor(apiKey) {
 		this.apiKey = apiKey;
