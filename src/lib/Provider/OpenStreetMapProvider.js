@@ -150,4 +150,16 @@ export default class OpenStreetMapProvider {
 			this.arrowDecorator = null;
 		}
 	}
+
+	getBoundingBox() {
+		const bounds = this.map.getBounds();
+		const ne = bounds.getNorthEast();
+		const sw = bounds.getSouthWest();
+		return {
+			north: ne.lat,
+			east: ne.lng,
+			south: sw.lat,
+			west: sw.lng
+		};
+	}
 }

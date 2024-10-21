@@ -41,7 +41,7 @@ export default class GoogleMapProvider {
 				target: container,
 				props: {
 					stop: options.stop,
-					icon: faBus,
+					icon: options.icon || faBus,
 					onClick: () => {
 						options.onClick && options.onClick();
 					}
@@ -122,5 +122,17 @@ export default class GoogleMapProvider {
 				strokeColor: '#FFFFFF'
 			}
 		});
+	}
+
+	getBoundingBox() {
+		const bounds = this.map.getBounds();
+		const ne = bounds.getNorthEast();
+		const sw = bounds.getSouthWest();
+		return {
+			north: ne.lat(),
+			east: ne.lng(),
+			south: sw.lat(),
+			west: sw.lng()
+		};
 	}
 }
