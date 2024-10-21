@@ -137,10 +137,8 @@ export default class OpenStreetMapProvider {
 		return polyline;
 	}
 
-
 	removePolyline(polyline) {
 		if (!polyline) return;
-
 
 		if (polyline.arrowDecorator) {
 			polyline.arrowDecorator.remove();
