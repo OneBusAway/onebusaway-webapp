@@ -5,6 +5,9 @@
 	import ModalPane from '$components/navigation/ModalPane.svelte';
 	import StopPane from '$components/oba/StopPane.svelte';
 	import MapContainer from '$components/MapContainer.svelte';
+	import RouteModal from '$components/navigation/RouteModal.svelte';
+	import { cleanupInfoWindow, cleanupStopMarkers } from '$lib/mapUtils';
+	import { MapSource } from '$config/mapSource';
 
 	let stop;
 	let selectedTrip = null;
@@ -12,6 +15,11 @@
 	let selectedRoute = null;
 	let showRouteMap = false;
 	let showAllStops = false;
+	let showRouteModal;
+	let mapProvider = null;
+	let mapSource = null;
+	let polylines = [];
+	let stops = [];
 
 	function stopSelected(event) {
 		stop = event.detail.stop;
@@ -19,10 +27,16 @@
 	}
 
 	function closePane() {
+		if (polylines) {
+			clearPolylines();
+			cleanupStopMarkers(mapSource);
+			cleanupInfoWindow();
+		}
 		stop = null;
 		selectedTrip = null;
 		selectedRoute = null;
 		showRoute = false;
+		showRouteModal = false;
 	}
 
 	function tripSelected(event) {
@@ -49,13 +63,45 @@
 		showAllStops = true;
 		showRouteMap = false;
 	}
+
+	function handleRouteSelected(event) {
+		selectedRoute = event.detail.route;
+		polylines = event.detail.polylines;
+		stops = event.detail.stops;
+		showRouteModal = true;
+	}
+
+	function clearPolylines() {
+		switch (mapSource) {
+			case MapSource.Google: {
+				polylines.map((p) => {
+					p.setMap(null);
+				});
+				break;
+			}
+			case MapSource.OpenStreetMap: {
+				polylines.map((p) => {
+					mapProvider.removePolyline(p);
+				});
+				break;
+			}
+		}
+
+		cleanupStopMarkers(mapSource);
+		selectedRoute = null;
+	}
 </script>
 
 <div class="absolute left-0 right-0 top-0 z-40">
 	<Header />
 
 	<div class="ml-4 mt-4 md:w-64">
-		<SearchPane />
+		<SearchPane
+			{mapProvider}
+			{mapSource}
+			on:routeSelected={handleRouteSelected}
+			on:clearResults={clearPolylines}
+		/>
 	</div>
 </div>
 
@@ -71,6 +117,12 @@
 	</ModalPane>
 {/if}
 
+{#if showRouteModal}
+	<ModalPane on:close={closePane}>
+		<RouteModal {mapProvider} {mapSource} {stops} {selectedRoute} />
+	</ModalPane>
+{/if}
+
 <MapContainer
 	{selectedTrip}
 	{selectedRoute}
@@ -78,4 +130,6 @@
 	{showRoute}
 	{showRouteMap}
 	{stop}
+	bind:mapProvider
+	bind:mapSource
 />
