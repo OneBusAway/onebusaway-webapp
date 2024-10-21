@@ -116,15 +116,7 @@ export default class OpenStreetMapProvider {
 			opacity: 1.0
 		}).addTo(this.map);
 
-		this.addArrowsToPolyline(polyline);
-
-		return polyline;
-	}
-
-	addArrowsToPolyline(polyline) {
-		if (!browser || !this.map || !polyline) return null;
-
-		this.arrowDecorator = this.L.polylineDecorator(polyline, {
+		const arrowDecorator = this.L.polylineDecorator(polyline, {
 			patterns: [
 				{
 					offset: 0,
@@ -139,15 +131,22 @@ export default class OpenStreetMapProvider {
 				}
 			]
 		}).addTo(this.map);
+
+		polyline.arrowDecorator = arrowDecorator;
+
+		return polyline;
 	}
 
+
 	removePolyline(polyline) {
-		if (polyline) {
-			polyline.remove();
+		if (!polyline) return;
+
+
+		if (polyline.arrowDecorator) {
+			polyline.arrowDecorator.remove();
+			polyline.arrowDecorator = null;
 		}
-		if (this.arrowDecorator) {
-			this.arrowDecorator.remove();
-			this.arrowDecorator = null;
-		}
+
+		polyline.remove();
 	}
 }
