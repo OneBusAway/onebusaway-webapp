@@ -36,11 +36,12 @@
 	let stopsCache = new Map();
 
 	function cacheKey(zoomLevel, boundingBox) {
+		const decimalPlaces = 2; // 2 decimal places equals between 0.5 and 1.1 km depending on where you are in the world.
 		const roundedBox = {
-			north: boundingBox.north.toFixed(1),
-			south: boundingBox.south.toFixed(1),
-			east: boundingBox.east.toFixed(1),
-			west: boundingBox.west.toFixed(1)
+			north: boundingBox.north.toFixed(decimalPlaces),
+			south: boundingBox.south.toFixed(decimalPlaces),
+			east: boundingBox.east.toFixed(decimalPlaces),
+			west: boundingBox.west.toFixed(decimalPlaces)
 		};
 
 		return `${roundedBox.north}_${roundedBox.south}_${roundedBox.east}_${roundedBox.west}_${zoomLevel}`;
