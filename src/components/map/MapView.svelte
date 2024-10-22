@@ -13,7 +13,6 @@
 	import MapTypeButton from '$lib/MapTypeButton/MapTypeButton.svelte';
 	import { faBus } from '@fortawesome/free-solid-svg-icons';
 	import { RouteType, routePriorities, prioritizedRouteTypeForDisplay } from '$config/routeConfig';
-	import { MapSource } from '$config/mapSource';
 
 	export let selectedTrip = null;
 	export let selectedRoute = null;
@@ -22,7 +21,6 @@
 	export let showAllStops = true;
 	export let stop = null;
 	export let mapProvider = null;
-	export let mapSource = null;
 	let selectedStopID = null;
 
 	const dispatch = createEventDispatcher();
@@ -59,18 +57,7 @@
 				await loadStopsAndAddMarkers(center.lat, center.lng);
 			}, 300);
 
-			mapInstance.addListener('dragend', debouncedLoadMarkers);
-			switch (mapSource) {
-				case MapSource.Google:
-					mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
-					mapInstance.addListener('center_changed', debouncedLoadMarkers);
-					break;
-
-				case MapSource.OpenStreetMap:
-					mapInstance.addListener('zoomend', debouncedLoadMarkers);
-					mapInstance.addListener('moveend', debouncedLoadMarkers);
-					break;
-			}
+			mapProvider.eventListeners(mapInstance, debouncedLoadMarkers);
 
 			if (browser) {
 				window.addEventListener('themeChange', handleThemeChange);
@@ -91,7 +78,6 @@
 
 		if (selectedRoute && !showRoute) {
 			allStops = [];
-			// Add stops to show
 		} else if (showRoute && selectedRoute) {
 			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
 			stopsToShow.forEach((s) => addMarker(s, routeReference));
@@ -208,7 +194,7 @@
 	<div id="map" bind:this={mapElement}></div>
 
 	{#if selectedTrip && showRouteMap}
-		<RouteMap mapProvider={mapInstance} {mapSource} tripId={selectedTrip.tripId} />
+		<RouteMap mapProvider={mapInstance} tripId={selectedTrip.tripId} />
 	{/if}
 </div>
 
