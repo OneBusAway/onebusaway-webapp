@@ -9,8 +9,8 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { MapSource } from './../config/mapSource.js';
 
-	let mapProvider = null;
-	let mapSource = null;
+	export let mapProvider = null;
+	export let mapSource = null;
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
@@ -33,7 +33,6 @@
 {#if mapProvider}
 	<MapView
 		{mapProvider}
-		{mapSource}
 		{...$$props}
 		on:stopSelected={forward}
 		on:selectedTrip={forward}

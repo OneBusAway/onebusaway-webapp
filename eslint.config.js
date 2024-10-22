@@ -14,7 +14,8 @@ export default [
 			globals: {
 				...globals.browser,
 				...globals.node,
-				L: 'readonly'
+				L: 'readonly',
+				google: 'readonly'
 			}
 		}
 	},

@@ -1,39 +1,66 @@
 import { OnebusawaySDK } from 'onebusaway-sdk';
-import { PUBLIC_OBA_SERVER_URL as baseUrl } from '$env/static/public';
-import { PRIVATE_OBA_API_KEY as apiKey } from '$env/static/private';
+
+import { googleGeocode } from '$lib/geocoder';
+
+import {
+	PUBLIC_OBA_SERVER_URL as baseUrl,
+	PUBLIC_OBA_REGION_CENTER_LAT as centerLat,
+	PUBLIC_OBA_REGION_CENTER_LNG as centerLng
+} from '$env/static/public';
+
+import {
+	PRIVATE_OBA_API_KEY as apiKey,
+	PRIVATE_OBA_GEOCODER_API_KEY as geocoderApiKey,
+	PRIVATE_OBA_GEOCODER_PROVIDER as geocoderProvider
+} from '$env/static/private';
 
 const oba = new OnebusawaySDK({
 	apiKey: apiKey,
 	baseURL: baseUrl
 });
 
-export async function GET({ url }) {
-	const searchInput = url.searchParams.get('query');
+async function routeSearch(query) {
+	const params = {
+		lat: centerLat,
+		lon: centerLng,
+		query
+	};
+	return oba.routesForLocation.list(params);
+}
 
-	try {
-		const [routeResponse, stopResponse] = await Promise.all([
-			oba.searchForRoute.list({ input: searchInput }),
-			oba.searchForStop.list({ input: searchInput })
-		]);
+async function stopSearch(query) {
+	const params = {
+		lat: centerLat,
+		lon: centerLng,
+		query
+	};
+	return oba.stopsForLocation.list(params);
+}
 
-		return new Response(
-			JSON.stringify({
-				routeSearchResults: routeResponse.data,
-				stopSearchResults: stopResponse.data
-			}),
-			{ headers: { 'Content-Type': 'application/json' } }
-		);
-	} catch (error) {
-		if (error.error.code == 404) {
-			return new Response(JSON.stringify({ error: 'No results found' }), {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' }
-			});
-		} else {
-			return new Response(JSON.stringify({ error: 'Search failed', details: error.message }), {
-				status: 500,
-				headers: { 'Content-Type': 'application/json' }
-			});
-		}
+async function locationSearch(query) {
+	if (geocoderProvider === 'google') {
+		return googleGeocode({ apiKey: geocoderApiKey, query });
+	} else {
+		return [];
 	}
+}
+
+export async function GET({ url }) {
+	const searchInput = url.searchParams.get('query')?.trim();
+
+	const [routeResponse, stopResponse, locationResponse] = await Promise.all([
+		routeSearch(searchInput),
+		stopSearch(searchInput),
+		locationSearch(searchInput)
+	]);
+
+	return new Response(
+		JSON.stringify({
+			routes: routeResponse.data.list,
+			stops: stopResponse.data.list,
+			location: locationResponse,
+			query: searchInput
+		}),
+		{ headers: { 'Content-Type': 'application/json' } }
+	);
 }

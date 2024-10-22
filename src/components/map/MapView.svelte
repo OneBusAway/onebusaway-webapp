@@ -21,7 +21,6 @@
 	export let showAllStops = true;
 	export let stop = null;
 	export let mapProvider = null;
-	export let mapSource = null;
 	let selectedStopID = null;
 
 	const dispatch = createEventDispatcher();
@@ -105,8 +104,7 @@
 				await loadStopsAndAddMarkers(center.lat, center.lng, false, zoomLevel);
 			}, 300);
 
-			mapInstance.addListener('dragend', debouncedLoadMarkers);
-			mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
+			mapProvider.eventListeners(mapInstance, debouncedLoadMarkers);
 
 			if (browser) {
 				window.addEventListener('themeChange', handleThemeChange);
@@ -124,11 +122,16 @@
 		allStops = [...new Map([...allStops, ...newStops].map((stop) => [stop.id, stop])).values()];
 
 		clearAllMarkers();
-		if (showRoute && selectedRoute) {
-			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
-			stopsToShow.forEach((s) => addMarker(s, routeReference));
-		} else {
-			newStops.forEach((s) => addMarker(s, routeReference));
+
+		if (selectedRoute && !showRoute) {
+			allStops = [];
+		} else if (showRoute && selectedRoute) {
+			if (showRoute && selectedRoute) {
+				const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
+				stopsToShow.forEach((s) => addMarker(s, routeReference));
+			} else {
+				newStops.forEach((s) => addMarker(s, routeReference));
+			}
 		}
 	}
 
@@ -137,6 +140,11 @@
 			mapInstance.removeMarker(markerObj);
 		});
 		markers = [];
+	}
+
+	$: if (selectedRoute && !showRoute) {
+		clearAllMarkers();
+		allStops = [];
 	}
 
 	$: if (stop && mapInstance) {
@@ -235,7 +243,7 @@
 	<div id="map" bind:this={mapElement}></div>
 
 	{#if selectedTrip && showRouteMap}
-		<RouteMap mapProvider={mapInstance} {mapSource} tripId={selectedTrip.tripId} />
+		<RouteMap mapProvider={mapInstance} tripId={selectedTrip.tripId} />
 	{/if}
 </div>
 

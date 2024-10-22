@@ -1,11 +1,15 @@
 import { loadGoogleMapsLibrary, createMap, nightModeStyles } from '$lib/googleMaps';
 import StopMarker from '$components/map/StopMarker.svelte';
 import { faBus } from '@fortawesome/free-solid-svg-icons';
-/* global google */
+import { COLORS } from '$lib/colors';
+import PopupContent from '$components/map/PopupContent.svelte';
 export default class GoogleMapProvider {
 	constructor(apiKey) {
 		this.apiKey = apiKey;
 		this.map = null;
+		this.stopMarkers = [];
+		this.globalInfoWindow = null;
+		this.popupContentComponent = null;
 	}
 
 	async initMap(element, options) {
@@ -32,6 +36,12 @@ export default class GoogleMapProvider {
 		});
 	}
 
+	eventListeners(mapInstance, debouncedLoadMarkers) {
+		mapInstance.addListener('dragend', debouncedLoadMarkers);
+		mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
+		mapInstance.addListener('center_changed', debouncedLoadMarkers);
+	}
+
 	addMarker(options) {
 		try {
 			const container = document.createElement('div');
@@ -41,7 +51,7 @@ export default class GoogleMapProvider {
 				target: container,
 				props: {
 					stop: options.stop,
-					icon: options.icon || faBus,
+					icon: faBus,
 					onClick: () => {
 						options.onClick && options.onClick();
 					}
@@ -86,6 +96,62 @@ export default class GoogleMapProvider {
 		}
 	}
 
+	addStopMarker(stop, stopTime = null) {
+		const marker = new google.maps.Marker({
+			position: { lat: stop.lat, lng: stop.lon },
+			map: this.map,
+			icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				scale: 5,
+				fillColor: '#FFFFFF',
+				fillOpacity: 1,
+				strokeWeight: 1,
+				strokeColor: '#000000'
+			}
+		});
+
+		marker.addListener('click', () => {
+			if (this.globalInfoWindow) {
+				this.globalInfoWindow.close();
+			}
+
+			if (this.popupContentComponent) {
+				this.popupContentComponent.$destroy();
+			}
+
+			const popupContainer = document.createElement('div');
+
+			this.popupContentComponent = new PopupContent({
+				target: popupContainer,
+				props: {
+					stopName: stop.name,
+					arrivalTime: stopTime ? stopTime.arrivalTime : null
+				}
+			});
+
+			this.globalInfoWindow = new google.maps.InfoWindow({
+				content: popupContainer
+			});
+
+			this.globalInfoWindow.open(this.map, marker);
+		});
+
+		this.stopMarkers.push(marker);
+	}
+
+	removeStopMarkers() {
+		this.stopMarkers.forEach((marker) => {
+			marker.setMap(null);
+		});
+		this.stopMarkers = [];
+	}
+
+	cleanupInfoWindow() {
+		if (this.globalInfoWindow) {
+			this.globalInfoWindow.close();
+		}
+	}
+
 	setCenter(latLng) {
 		this.map.setCenter(latLng);
 	}
@@ -122,6 +188,60 @@ export default class GoogleMapProvider {
 				strokeColor: '#FFFFFF'
 			}
 		});
+	}
+
+	async createPolyline(shape, addArrow = true) {
+		await window.google.maps.importLibrary('geometry');
+
+		const decodedPath = google.maps.geometry.encoding.decodePath(shape);
+		const path = decodedPath.map((point) => ({ lat: point.lat(), lng: point.lng() }));
+
+		const polylineOptions = {
+			path,
+			geodesic: true,
+			strokeColor: COLORS.POLYLINE,
+			strokeOpacity: 1.0,
+			strokeWeight: 4
+		};
+
+		if (addArrow) {
+			const arrowSymbol = {
+				path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+				scale: 2,
+				strokeColor: COLORS.POLYLINE_ARROW,
+				strokeWeight: 3
+			};
+
+			polylineOptions.icons = [
+				{
+					icon: arrowSymbol,
+					offset: '100%',
+					repeat: '50px'
+				}
+			];
+		}
+
+		const polyline = new window.google.maps.Polyline(polylineOptions);
+
+		polyline.setMap(this.map);
+
+		return polyline;
+	}
+
+	async removePolyline(polyline) {
+		if (polyline && polyline.setMap) {
+			polyline.setMap(null);
+		}
+
+		return null;
+	}
+
+	panTo(lat, lng) {
+		this.map.panTo({ lat, lng });
+	}
+
+	setZoom(zoom) {
+		this.map.setZoom(zoom);
 	}
 
 	getBoundingBox() {
