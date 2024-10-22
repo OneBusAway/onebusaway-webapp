@@ -75,7 +75,6 @@ export default class OpenStreetMapProvider {
 		return marker;
 	}
 
-
 	addStopMarker(stop, stopTime = null) {
 		const customIcon = L.divIcon({
 			html: `<svg width="15" height="15" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-circle"><circle cx="12" cy="12" r="10"/></svg>`,
@@ -85,7 +84,6 @@ export default class OpenStreetMapProvider {
 		});
 
 		const marker = L.marker([stop.lat, stop.lon], { icon: customIcon }).addTo(this.map);
-
 
 		marker.on('click', () => {
 			if (this.globalInfoWindow) {
@@ -113,9 +111,7 @@ export default class OpenStreetMapProvider {
 		});
 
 		this.stopMarkers.push(marker);
-
 	}
-
 
 	removeStopMarkers() {
 		this.stopMarkers.forEach((marker) => {
@@ -217,7 +213,7 @@ export default class OpenStreetMapProvider {
 		polyline.remove();
 	}
 
-	panTo(lat , lng) {
+	panTo(lat, lng) {
 		if (!browser || !this.map) return;
 		this.map.panTo([lat, lng]);
 	}

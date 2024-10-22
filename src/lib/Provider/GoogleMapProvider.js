@@ -9,7 +9,7 @@ export default class GoogleMapProvider {
 		this.apiKey = apiKey;
 		this.map = null;
 		this.stopMarkers = [];
-    	this.globalInfoWindow = null;
+		this.globalInfoWindow = null;
 		this.popupContentComponent = null;
 	}
 
@@ -40,7 +40,7 @@ export default class GoogleMapProvider {
 	eventListeners(mapInstance, debouncedLoadMarkers) {
 		mapInstance.addListener('dragend', debouncedLoadMarkers);
 		mapInstance.addListener('zoom_changed', debouncedLoadMarkers);
-		mapInstance.addListener('center_changed', debouncedLoadMarkers)
+		mapInstance.addListener('center_changed', debouncedLoadMarkers);
 	}
 
 	addMarker(options) {
@@ -142,14 +142,14 @@ export default class GoogleMapProvider {
 
 	removeStopMarkers() {
 		this.stopMarkers.forEach((marker) => {
-		marker.setMap(null);
+			marker.setMap(null);
 		});
 		this.stopMarkers = [];
-  	}
+	}
 
 	cleanupInfoWindow() {
 		if (this.globalInfoWindow) {
-		this.globalInfoWindow.close();
+			this.globalInfoWindow.close();
 		}
 	}
 
