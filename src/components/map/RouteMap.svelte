@@ -43,8 +43,7 @@
 		for (const stopTime of stopTimes) {
 			const stop = stops.find((s) => s.id === stopTime.stopId);
 			if (stop && isMounted) {
-				const popContainer = document.createElement('div');
-				mapProvider.addStopMarker(stop, popContainer, stopTime);
+				mapProvider.addStopMarker(stop, stopTime);
 			}
 		}
 	}
