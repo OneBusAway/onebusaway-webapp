@@ -1,11 +1,6 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { createPolyline, addArrowToPolyline } from '$lib/googleMaps';
-	import { MapSource } from '$config/mapSource';
-	import { addStopMarker, cleanupInfoWindow, cleanupStopMarkers } from '$lib/mapUtils';
-
 	export let mapProvider;
-	export let mapSource;
 	export let tripId;
 	let shapeId = null;
 	let polyline;
@@ -17,20 +12,11 @@
 		await loadRouteData();
 	});
 
-	onDestroy(() => {
+	onDestroy(async () => {
 		isMounted = false;
-		switch (mapSource) {
-			case MapSource.Google: {
-				polyline?.setMap(null);
-				break;
-			}
-			case MapSource.OpenStreetMap: {
-				mapProvider.removePolyline(polyline);
-				break;
-			}
-		}
-		cleanupStopMarkers();
-		cleanupInfoWindow();
+		mapProvider.removePolyline(await polyline);
+		mapProvider.removeStopMarkers();
+		mapProvider.cleanupInfoWindow();
 	});
 
 	async function loadRouteData() {
@@ -47,18 +33,7 @@
 			const shapePoints = shapeData?.data?.entry?.points;
 
 			if (shapePoints && isMounted) {
-				switch (mapSource) {
-					case MapSource.Google: {
-						polyline = await createPolyline(shapePoints);
-						addArrowToPolyline(polyline);
-						polyline.setMap(mapProvider.map);
-						break;
-					}
-					case MapSource.OpenStreetMap: {
-						polyline = mapProvider.createPolyline(shapePoints);
-						break;
-					}
-				}
+				polyline = await mapProvider.createPolyline(shapePoints);
 			}
 		}
 
@@ -68,7 +43,8 @@
 		for (const stopTime of stopTimes) {
 			const stop = stops.find((s) => s.id === stopTime.stopId);
 			if (stop && isMounted) {
-				addStopMarker(mapProvider, mapSource, stop, stopTime);
+				const popContainer = document.createElement('div');
+				mapProvider.addStopMarker(stop, popContainer, stopTime);
 			}
 		}
 	}
