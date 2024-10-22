@@ -5,9 +5,6 @@
 	import { compassDirection } from '$lib/formatters';
 	import { prioritizedRouteTypeForDisplay } from '$config/routeConfig';
 	import { faMapPin, faSignsPost } from '@fortawesome/free-solid-svg-icons';
-	import { MapSource } from '$config/mapSource';
-	import { addArrowToPolyline, createPolyline } from '$lib/googleMaps';
-	import { addStopMarker } from '$lib/mapUtils';
 
 	const dispatch = createEventDispatcher();
 
@@ -18,7 +15,6 @@
 	let polylines = [];
 
 	export let mapProvider = null;
-	export let mapSource = null;
 
 	function handleLocationClick(location) {
 		if (polylines) {
@@ -30,19 +26,8 @@
 		const lat = location.geometry.location.lat;
 		const lng = location.geometry.location.lng;
 
-		switch (mapSource) {
-			case MapSource.Google: {
-				mapProvider.map.panTo({ lat: lat, lng: lng });
-				mapProvider.map.setZoom(20);
-				break;
-			}
-
-			case MapSource.OpenStreetMap: {
-				mapProvider.map.panTo({ lat, lng });
-				mapProvider.map.setZoom(20);
-				break;
-			}
-		}
+		mapProvider.panTo(lat, lng);
+		mapProvider.setZoom(20);
 
 		dispatch('locationSelected', { location });
 	}
@@ -54,19 +39,9 @@
 
 		clearResults();
 
-		switch (mapSource) {
-			case MapSource.Google: {
-				mapProvider.map.panTo({ lat: stop.lat, lng: stop.lon });
-				mapProvider.map.setZoom(20);
-				break;
-			}
+		mapProvider.panTo(stop.lat, stop.lon);
+		mapProvider.setZoom(20);
 
-			case MapSource.OpenStreetMap: {
-				mapProvider.map.panTo([stop.lat, stop.lon]);
-				mapProvider.map.setZoom(20);
-				break;
-			}
-		}
 		dispatch('stopSelected', { stop });
 	}
 
@@ -88,19 +63,7 @@
 			const shape = polylineData.points;
 			let polyline;
 
-			switch (mapSource) {
-				case MapSource.Google: {
-					polyline = await createPolyline(shape);
-					addArrowToPolyline(polyline);
-					polyline.setMap(mapProvider.map);
-					break;
-				}
-
-				case MapSource.OpenStreetMap: {
-					polyline = mapProvider.createPolyline(shape);
-					break;
-				}
-			}
+			polyline = mapProvider.createPolyline(shape);
 
 			polylines.push(polyline);
 		}
@@ -110,26 +73,16 @@
 
 		showStopsOnRoute(stops);
 
-		mapProvider.map.setZoom(11);
+		mapProvider.setZoom(11);
 
-		switch (mapSource) {
-			case MapSource.Google: {
-				mapProvider.map.panTo({ lat: routeLat, lng: routeLon });
-				break;
-			}
-
-			case MapSource.OpenStreetMap: {
-				mapProvider.map.flyTo([routeLat, routeLon], 11);
-				break;
-			}
-		}
+		mapProvider.panTo(routeLat, routeLon);
 
 		dispatch('routeSelected', { route, stopsForRoute, stops, polylines });
 	}
 
 	async function showStopsOnRoute(stops) {
 		for (const stop of stops) {
-			addStopMarker(mapProvider, mapSource, stop);
+			mapProvider.addStopMarker(stop, null);
 		}
 	}
 
