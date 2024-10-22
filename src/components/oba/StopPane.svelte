@@ -118,11 +118,11 @@
 	{#if arrivalsAndDepartures}
 		<div>
 			<div>
-				<div class="h-36 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
-					<h1 class="h1 mb-1">{stop.name}</h1>
-					<h2 class="h2 mb-1">Stop #{stop.id}</h2>
+				<div class="flex flex-col gap-y-1 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
+					<h1 class="h1 mb-0 text-white">{stop.name}</h1>
+					<h2 class="h2 mb-0 text-white">Stop #{stop.id}</h2>
 					{#if routeShortNames()}
-						<h2 class="h2">Routes: {routeShortNames().join(', ')}</h2>
+						<h2 class="h2 mb-0 text-white">Routes: {routeShortNames().join(', ')}</h2>
 					{/if}
 				</div>
 			</div>

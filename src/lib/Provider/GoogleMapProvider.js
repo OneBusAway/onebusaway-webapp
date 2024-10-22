@@ -3,7 +3,7 @@ import StopMarker from '$components/map/StopMarker.svelte';
 import { faBus } from '@fortawesome/free-solid-svg-icons';
 import { COLORS } from '$lib/colors';
 import PopupContent from '$components/map/PopupContent.svelte';
-
+/* global google */
 export default class GoogleMapProvider {
 	constructor(apiKey) {
 		this.apiKey = apiKey;
@@ -243,5 +243,17 @@ export default class GoogleMapProvider {
 
 	setZoom(zoom) {
 		this.map.setZoom(zoom);
+	}
+
+	getBoundingBox() {
+		const bounds = this.map.getBounds();
+		const ne = bounds.getNorthEast();
+		const sw = bounds.getSouthWest();
+		return {
+			north: ne.lat(),
+			east: ne.lng(),
+			south: sw.lat(),
+			west: sw.lng()
+		};
 	}
 }

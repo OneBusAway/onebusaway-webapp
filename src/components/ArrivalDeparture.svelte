@@ -24,7 +24,11 @@
 		const scheduledDiff = scheduled - now;
 
 		if (predictedTime == 0) {
-			return { status: 'scheduled', text: 'Scheduled/not real-time', color: 'text-gray-500' };
+			return {
+				status: 'scheduled',
+				text: 'Scheduled/not real-time',
+				color: 'text-gray-500 dark:text-gray-400'
+			};
 		} else if (predictedDiff <= 0) {
 			return {
 				status: 'early',

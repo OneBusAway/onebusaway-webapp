@@ -32,13 +32,58 @@
 	let markers = [];
 	let allStops = [];
 	let routeReference = [];
+	let stopsCache = new Map();
 
-	async function loadStopsForLocation(lat, lng) {
-		const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}`);
+	function cacheKey(zoomLevel, boundingBox) {
+		const decimalPlaces = 2; // 2 decimal places equals between 0.5 and 1.1 km depending on where you are in the world.
+		const roundedBox = {
+			north: boundingBox.north.toFixed(decimalPlaces),
+			south: boundingBox.south.toFixed(decimalPlaces),
+			east: boundingBox.east.toFixed(decimalPlaces),
+			west: boundingBox.west.toFixed(decimalPlaces)
+		};
+
+		return `${roundedBox.north}_${roundedBox.south}_${roundedBox.east}_${roundedBox.west}_${zoomLevel}`;
+	}
+
+	function getBoundingBox() {
+		if (!mapProvider) {
+			throw new Error('Map provider is not initialized');
+		}
+		return mapProvider.getBoundingBox();
+	}
+
+	async function loadStopsForLocation(lat, lng, zoomLevel, firstCall = false) {
+		if (firstCall) {
+			const response = await fetch(`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&radius=2500`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch locations');
+			}
+			return await response.json();
+		}
+
+		const boundingBox = getBoundingBox();
+		const key = cacheKey(zoomLevel, boundingBox);
+
+		if (stopsCache.has(key)) {
+			console.debug('Stop cache hit: ', key);
+			return stopsCache.get(key);
+		} else {
+			console.debug('Stop cache miss: ', key);
+		}
+
+		const response = await fetch(
+			`/api/oba/stops-for-location?lat=${lat}&lng=${lng}&latSpan=${boundingBox.north - boundingBox.south}&lngSpan=${boundingBox.east - boundingBox.west}&radius=1500`
+		);
+
 		if (!response.ok) {
 			throw new Error('Failed to fetch locations');
 		}
-		return await response.json();
+
+		const stopsForLocation = await response.json();
+		stopsCache.set(key, stopsForLocation);
+
+		return stopsForLocation;
 	}
 
 	async function initMap() {
@@ -50,11 +95,13 @@
 
 			mapInstance = mapProvider;
 
-			await loadStopsAndAddMarkers(initialLat, initialLng);
+			await loadStopsAndAddMarkers(initialLat, initialLng, true);
 
 			const debouncedLoadMarkers = debounce(async () => {
 				const center = mapInstance.getCenter();
-				await loadStopsAndAddMarkers(center.lat, center.lng);
+				const zoomLevel = mapInstance.map.getZoom();
+
+				await loadStopsAndAddMarkers(center.lat, center.lng, false, zoomLevel);
 			}, 300);
 
 			mapProvider.eventListeners(mapInstance, debouncedLoadMarkers);
@@ -67,10 +114,10 @@
 		}
 	}
 
-	async function loadStopsAndAddMarkers(lat, lng) {
-		const json = await loadStopsForLocation(lat, lng);
-		const newStops = json.data.list;
-		routeReference = json.data.references?.routes || [];
+	async function loadStopsAndAddMarkers(lat, lng, firstCall = false, zoomLevel = 15) {
+		const stopsData = await loadStopsForLocation(lat, lng, zoomLevel, firstCall);
+		const newStops = stopsData.data.list;
+		routeReference = stopsData.data.references.routes || [];
 
 		allStops = [...new Map([...allStops, ...newStops].map((stop) => [stop.id, stop])).values()];
 
@@ -79,10 +126,12 @@
 		if (selectedRoute && !showRoute) {
 			allStops = [];
 		} else if (showRoute && selectedRoute) {
-			const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
-			stopsToShow.forEach((s) => addMarker(s, routeReference));
-		} else {
-			newStops.forEach((s) => addMarker(s, routeReference));
+			if (showRoute && selectedRoute) {
+				const stopsToShow = allStops.filter((s) => s.routeIds.includes(selectedRoute.id));
+				stopsToShow.forEach((s) => addMarker(s, routeReference));
+			} else {
+				newStops.forEach((s) => addMarker(s, routeReference));
+			}
 		}
 	}
 

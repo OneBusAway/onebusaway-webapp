@@ -17,17 +17,15 @@
 	</span>
 </button>
 
-<style>
+<style lang="postcss">
 	.custom-marker {
-		width: 40px;
-		height: 40px;
-		border-radius: 5px;
+		@apply h-8 w-8 rounded-md;
+		@apply bg-white/80 dark:bg-neutral-200;
+		@apply border border-2 border-gray-400;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: relative;
-		background-color: rgba(255, 255, 255, 0.8);
-		border: 2px solid #444;
 	}
 
 	.custom-marker:hover {
@@ -35,7 +33,7 @@
 	}
 
 	.bus-icon {
-		font-size: 24px;
+		font-size: 20px;
 		color: #000;
 	}
 
