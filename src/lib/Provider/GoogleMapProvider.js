@@ -3,7 +3,6 @@ import StopMarker from '$components/map/StopMarker.svelte';
 import { faBus } from '@fortawesome/free-solid-svg-icons';
 import { COLORS } from '$lib/colors';
 import PopupContent from '$components/map/PopupContent.svelte';
-/* global google */
 export default class GoogleMapProvider {
 	constructor(apiKey) {
 		this.apiKey = apiKey;
