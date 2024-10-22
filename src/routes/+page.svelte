@@ -6,8 +6,6 @@
 	import StopPane from '$components/oba/StopPane.svelte';
 	import MapContainer from '$components/MapContainer.svelte';
 	import RouteModal from '$components/navigation/RouteModal.svelte';
-	import { cleanupInfoWindow, cleanupStopMarkers } from '$lib/mapUtils';
-	import { MapSource } from '$config/mapSource';
 
 	let stop;
 	let selectedTrip = null;
@@ -17,7 +15,6 @@
 	let showAllStops = false;
 	let showRouteModal;
 	let mapProvider = null;
-	let mapSource = null;
 	let polylines = [];
 	let stops = [];
 
@@ -29,8 +26,8 @@
 	function closePane() {
 		if (polylines) {
 			clearPolylines();
-			cleanupStopMarkers(mapSource);
-			cleanupInfoWindow();
+			mapProvider.removeStopMarkers();
+			mapProvider.cleanupInfoWindow();
 		}
 		stop = null;
 		selectedTrip = null;
@@ -72,22 +69,11 @@
 	}
 
 	function clearPolylines() {
-		switch (mapSource) {
-			case MapSource.Google: {
-				polylines.map((p) => {
-					p.setMap(null);
-				});
-				break;
-			}
-			case MapSource.OpenStreetMap: {
-				polylines.map((p) => {
-					mapProvider.removePolyline(p);
-				});
-				break;
-			}
-		}
+		polylines.map(async (p) => {
+			mapProvider.removePolyline(await p);
+		});
 
-		cleanupStopMarkers(mapSource);
+		mapProvider.removeStopMarkers();
 		selectedRoute = null;
 	}
 </script>
@@ -98,7 +84,6 @@
 	<div class="ml-4 mt-4 md:w-64">
 		<SearchPane
 			{mapProvider}
-			{mapSource}
 			on:routeSelected={handleRouteSelected}
 			on:clearResults={clearPolylines}
 		/>
@@ -119,7 +104,7 @@
 
 {#if showRouteModal}
 	<ModalPane on:close={closePane}>
-		<RouteModal {mapProvider} {mapSource} {stops} {selectedRoute} />
+		<RouteModal {mapProvider} {stops} {selectedRoute} />
 	</ModalPane>
 {/if}
 
@@ -131,5 +116,4 @@
 	{showRouteMap}
 	{stop}
 	bind:mapProvider
-	bind:mapSource
 />
