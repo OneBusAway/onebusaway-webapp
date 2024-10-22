@@ -1,28 +1,15 @@
 <script>
 	import StopItem from '$components/StopItem.svelte';
-	import { MapSource } from '$config/mapSource';
 
 	export let selectedRoute;
 	export let stops;
 	export let mapProvider;
-	export let mapSource;
 
 	function handleStopItemClick(event) {
 		const { stop } = event.detail;
 
-		switch (mapSource) {
-			case MapSource.Google: {
-				mapProvider.map.panTo({ lat: stop.lat, lng: stop.lon });
-				mapProvider.map.setZoom(20);
-				break;
-			}
-
-			case MapSource.OpenStreetMap: {
-				mapProvider.map.panTo([stop.lat, stop.lon]);
-				mapProvider.map.setZoom(20);
-				break;
-			}
-		}
+		mapProvider.panTo(stop.lat, stop.lon);
+		mapProvider.setZoom(20);
 	}
 </script>
 
