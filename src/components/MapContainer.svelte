@@ -33,7 +33,6 @@
 {#if mapProvider}
 	<MapView
 		{mapProvider}
-		{mapSource}
 		{...$$props}
 		on:stopSelected={forward}
 		on:selectedTrip={forward}
