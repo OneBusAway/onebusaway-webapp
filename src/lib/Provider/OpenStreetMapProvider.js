@@ -4,11 +4,15 @@ import { faBus } from '@fortawesome/free-solid-svg-icons';
 import './../../assets/styles/leaflet-map.css';
 import PolylineUtil from 'polyline-encoded';
 import { COLORS } from '$lib/colors';
+import PopupContent from '$components/map/PopupContent.svelte';
 
 export default class OpenStreetMapProvider {
 	constructor() {
 		this.map = null;
 		this.L = null;
+		this.stopMarkers = [];
+		this.globalInfoWindow = null;
+		this.popupContentComponent = null;
 	}
 
 	async initMap(element, options) {
@@ -38,6 +42,12 @@ export default class OpenStreetMapProvider {
 		this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(this.map);
 	}
 
+	eventListeners(mapInstance, debouncedLoadMarkers) {
+		mapInstance.addListener('dragend', debouncedLoadMarkers);
+		mapInstance.addListener('zoomend', debouncedLoadMarkers);
+		mapInstance.addListener('moveend', debouncedLoadMarkers);
+	}
+
 	addMarker(options) {
 		if (!browser || !this.map) return null;
 
@@ -63,6 +73,65 @@ export default class OpenStreetMapProvider {
 		}).addTo(this.map);
 
 		return marker;
+	}
+
+
+	addStopMarker(stop, stopTime = null) {
+		const customIcon = L.divIcon({
+			html: `<svg width="15" height="15" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-circle"><circle cx="12" cy="12" r="10"/></svg>`,
+			className: '',
+			iconSize: [20, 20],
+			iconAnchor: [10, 10]
+		});
+
+		const marker = L.marker([stop.lat, stop.lon], { icon: customIcon }).addTo(this.map);
+
+
+		marker.on('click', () => {
+			if (this.globalInfoWindow) {
+				this.map.closePopup(this.globalInfoWindow);
+			}
+
+			if (this.popupContentComponent) {
+				this.popupContentComponent.$destroy();
+			}
+
+			const popupContainer = document.createElement('div');
+
+			this.popupContentComponent = new PopupContent({
+				target: popupContainer,
+				props: {
+					stopName: stop.name,
+					arrivalTime: stopTime ? stopTime.arrivalTime : null
+				}
+			});
+
+			this.globalInfoWindow = L.popup()
+				.setLatLng([stop.lat, stop.lon])
+				.setContent(popupContainer)
+				.openOn(this.map);
+		});
+
+		this.stopMarkers.push(marker);
+
+	}
+
+
+	removeStopMarkers() {
+		this.stopMarkers.forEach((marker) => {
+			marker.remove();
+		});
+		this.stopMarkers = [];
+	}
+
+	cleanupInfoWindow() {
+		if (this.globalInfoWindow) {
+			this.globalInfoWindow.close();
+		}
+	}
+
+	removeStopMarker(marker) {
+		marker.remove();
 	}
 
 	addListener(event, callback) {
@@ -146,5 +215,15 @@ export default class OpenStreetMapProvider {
 		}
 
 		polyline.remove();
+	}
+
+	panTo(lat , lng) {
+		if (!browser || !this.map) return;
+		this.map.panTo([lat, lng]);
+	}
+
+	setZoom(zoom) {
+		if (!browser || !this.map) return;
+		this.map.setZoom(zoom);
 	}
 }
