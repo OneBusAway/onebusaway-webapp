@@ -4,6 +4,9 @@
 	import TripDetailsModal from '../navigation/TripDetailsModal.svelte';
 	import { createEventDispatcher } from 'svelte';
 
+	import '$lib/i18n.js';
+	import { t } from 'svelte-i18n';
+
 	export let stop;
 	export let arrivalsAndDeparturesResponse = null;
 	export let showAllStops = true;
@@ -106,7 +109,7 @@
 						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 					></path>
 				</svg>
-				Loading...
+				{$t('loading')}...
 			</div>
 		</div>
 	{/if}
@@ -120,14 +123,14 @@
 			<div>
 				<div class="flex flex-col gap-y-1 rounded-lg bg-[#1C1C1E] bg-opacity-80 p-4">
 					<h1 class="h1 mb-0 text-white">{stop.name}</h1>
-					<h2 class="h2 mb-0 text-white">Stop #{stop.id}</h2>
+					<h2 class="h2 mb-0 text-white">{$t('stop')} #{stop.id}</h2>
 					{#if routeShortNames()}
-						<h2 class="h2 mb-0 text-white">Routes: {routeShortNames().join(', ')}</h2>
+						<h2 class="h2 mb-0 text-white">{$t('routes')}: {routeShortNames().join(', ')}</h2>
 					{/if}
 				</div>
 			</div>
 			<div>
-				<h2 class="h2 ml-4 mt-4">Arrivals and Departures</h2>
+				<h2 class="h2 ml-4 mt-4">{$t('arrivals_and_departures')}</h2>
 			</div>
 			<div class="scrollbar-hidden h-96 space-y-2 overflow-y-scroll rounded-lg">
 				<div>

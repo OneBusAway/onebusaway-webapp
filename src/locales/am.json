@@ -1,0 +1,29 @@
+{
+	"search": {
+		"placeholder": "ቆሻሻዎችን፣ መንገዶችን እና ቦታዎችን ይፈልጉ",
+		"results_for": "የፍለጋ ውጤቶች ለ",
+		"clear_results": "ውጤቶችን አጥፋ",
+		"search": "ፈልግ"
+	},
+	"header": {
+		"home": "ቤት",
+		"about": "ስለ እኛ",
+		"contact": "እኛን ያነጋግሩ",
+		"fares_and_tolls": "ክፍያዎች እና ግብሶች"
+	},
+	"status": {
+		"scheduled": "ታቅዷል",
+		"early": "በስተ ቀድሞ",
+		"late": "ዝንባሌ",
+		"on_time": "በትክክል ጊዜ",
+		"min": "ደቂቃ",
+		"arrives_on_time": "በጊዜው ይደርሳል",
+		"scheduled_not_real_time": "ታቅዷል/እንደሚሆነ ሁኔታ"
+	},
+	"arrivals_and_departures": "መግቢያዎችና መውጫዎች",
+	"stop": "ቆሻሻ",
+	"routes": "መንገዶች",
+	"route": "መንገድ",
+	"loading": "በመጫን ላይ",
+	"arrives": "ይደርሳል"
+}

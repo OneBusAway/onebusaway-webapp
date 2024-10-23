@@ -7,6 +7,7 @@
 	export let vehicleId;
 	export let serviceDate;
 	import { createEventDispatcher } from 'svelte';
+	import { t } from 'svelte-i18n';
 
 	const dispatch = createEventDispatcher();
 
@@ -25,22 +26,26 @@
 
 		if (predictedTime == 0) {
 			return {
-				status: 'scheduled',
-				text: 'Scheduled/not real-time',
+				status: `${$t('status.scheduled')}`,
+				text: `${$t('status.scheduled_not_real_time')}`,
 				color: 'text-gray-500 dark:text-gray-400'
 			};
 		} else if (predictedDiff <= 0) {
 			return {
-				status: 'early',
-				text: 'arrives ' + Math.abs(Math.floor(predictedDiff / 60000)) + ' min early',
+				status: `${$t('early')}`,
+				text: `${$t('arrives')} ${Math.abs(Math.floor(predictedDiff / 60000))} ${$t('status.min')} ${$t('status.early')}`,
 				color: 'text-red-500'
 			};
 		} else if (scheduledDiff <= 0) {
-			return { status: 'on time', text: 'arrives on time', color: 'text-green-500' };
+			return {
+				status: 'on time',
+				text: `${$t('status.arrives_on_time')}`,
+				color: 'text-green-500'
+			};
 		} else {
 			return {
-				status: 'late',
-				text: 'arrives ' + Math.floor(predictedDiff / 60000) + ' min late',
+				status: `${$t('status.late')}`,
+				text: `${$t('arrives')} ${Math.floor(predictedDiff / 60000)} ${$t('status.min')} ${$t('status.late')}`,
 				color: 'text-blue-500'
 			};
 		}

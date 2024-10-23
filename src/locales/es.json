@@ -1,0 +1,30 @@
+{
+	"search": {
+		"placeholder": "Buscar paradas, rutas y lugares",
+		"results_for": "Resultados de búsqueda para",
+		"clear_results": "Borrar resultados",
+		"search": "Buscar"
+	},
+	"header": {
+		"home": "Inicio",
+		"about": "Acerca de",
+		"contact": "Contacto",
+		"fares_and_tolls": "Tarifas y peajes"
+	},
+	"status": {
+		"scheduled": "programado",
+		"early": "temprano",
+		"late": "tarde",
+		"on_time": "a tiempo",
+		"min": "min",
+		"arrives_on_time": "llega a tiempo",
+		"scheduled_not_real_time": "Programado/no en tiempo real"
+	},
+
+	"arrivals_and_departures": "Llegadas y salidas",
+	"stop": "Parada",
+	"routes": "Rutas",
+	"route": "Ruta",
+	"loading": "Cargando",
+	"arrives": "llega"
+}

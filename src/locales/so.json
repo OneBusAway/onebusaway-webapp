@@ -1,0 +1,29 @@
+{
+	"search": {
+		"placeholder": "Raadi joogsiyo, wadooyin iyo meelo",
+		"results_for": "Natiijooyinka raadinta ee",
+		"clear_results": "Nadiifi natiijooyinka",
+		"search": "Raadi"
+	},
+	"header": {
+		"home": "Bogga Hore",
+		"about": "Nagu saabsan",
+		"contact": "Nala soo xiriir",
+		"fares_and_tolls": "Lacagta iyo cashuuraha"
+	},
+	"status": {
+		"scheduled": "jadwaleysan",
+		"early": "goor hore",
+		"late": "daahsan",
+		"on_time": "wakhtiga",
+		"min": "daqiiqo",
+		"arrives_on_time": "wakhtiga ku yimid",
+		"scheduled_not_real_time": "Jadwaleysan/maaha waqtiga dhabta ah"
+	},
+	"arrivals_and_departures": "Imaatinka iyo baxsashada",
+	"stop": "Joogsi",
+	"routes": "Wadooyin",
+	"route": "waddo",
+	"loading": "Shaqeynaya",
+	"arrives": "imaataa"
+}

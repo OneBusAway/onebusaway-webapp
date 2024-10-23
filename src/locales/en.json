@@ -1,0 +1,30 @@
+{
+	"search": {
+		"placeholder": "Search for stops, routes, and places",
+		"results_for": "Search results for",
+		"clear_results": "Clear results",
+		"search": "Search"
+	},
+	"header": {
+		"home": "Home",
+		"about": "About",
+		"contact": "Contact",
+		"fares_and_tolls": "Fares & Tolls"
+	},
+	"status": {
+		"scheduled": "scheduled",
+		"early": "early",
+		"late": "late",
+		"on_time": "on time",
+		"min": "min",
+		"arrives_on_time": "arrives on time",
+		"scheduled_not_real_time": "Scheduled/not real-time"
+	},
+
+	"arrivals_and_departures": "Arrivals and departures",
+	"stop": "Stop",
+	"routes": "Routes",
+	"route": "route",
+	"loading": "Loading",
+	"arrives": "arrives"
+}

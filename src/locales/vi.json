@@ -1,0 +1,29 @@
+{
+	"search": {
+		"placeholder": "Tìm kiếm trạm dừng, tuyến đường và địa điểm",
+		"results_for": "Kết quả tìm kiếm cho",
+		"clear_results": "Xóa kết quả",
+		"search": "Tìm kiếm"
+	},
+	"header": {
+		"home": "Trang chủ",
+		"about": "Về chúng tôi",
+		"contact": "Liên hệ",
+		"fares_and_tolls": "Phí và lệ phí"
+	},
+	"status": {
+		"scheduled": "đã lên lịch",
+		"early": "sớm",
+		"late": "trễ",
+		"on_time": "đúng giờ",
+		"min": "phút",
+		"arrives_on_time": "đến đúng giờ",
+		"scheduled_not_real_time": "Lên lịch/không thời gian thực"
+	},
+	"arrivals_and_departures": "Đến và đi",
+	"stop": "Trạm dừng",
+	"routes": "Tuyến đường",
+	"route": "tuyến đường",
+	"loading": "Đang tải",
+	"arrives": "đến"
+}

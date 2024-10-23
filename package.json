@@ -42,6 +42,7 @@
 		"leaflet": "^1.9.4",
 		"leaflet-polylinedecorator": "^1.6.0",
 		"onebusaway-sdk": "^1.0.1",
-		"polyline-encoded": "^0.0.9"
+		"polyline-encoded": "^0.0.9",
+		"svelte-i18n": "^4.0.1"
 	}
 }

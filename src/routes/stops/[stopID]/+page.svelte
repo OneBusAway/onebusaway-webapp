@@ -1,5 +1,6 @@
 <script>
 	import StopPane from '$components/oba/StopPane.svelte';
+	import '$lib/i18n.js';
 	export let data;
 	const stop = data.stopData.entry;
 	const arrivalsAndDeparturesResponse = data.arrivalsAndDeparturesResponse;
