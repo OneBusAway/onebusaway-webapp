@@ -22,11 +22,11 @@
 </script>
 
 <div
-	class="bg-blur-md bg-white/80 dark:bg-black dark:text-white md:flex-row md:px-8 flex items-center justify-between px-4 border-b border-gray-500"
+	class="bg-blur-md flex items-center justify-between border-b border-gray-500 bg-white/80 px-4 dark:bg-black dark:text-white md:flex-row md:px-8"
 >
-	<div class="md:flex-none flex items-center justify-between flex-1">
-		<div class="md:w-auto flex justify-between w-full gap-4 px-2 py-2">
-			<div class="gap-x-2 flex items-center justify-center">
+	<div class="flex flex-1 items-center justify-between md:flex-none">
+		<div class="flex w-full justify-between gap-4 px-2 py-2 md:w-auto">
+			<div class="flex items-center justify-center gap-x-2">
 				<a href="/" class="block">
 					<img src={PUBLIC_OBA_LOGO_URL} alt={PUBLIC_OBA_REGION_NAME} class="h-10 rounded-sm" />
 				</a>
@@ -35,10 +35,10 @@
 				</a>
 			</div>
 
-			<div class="md:hidden flex items-center justify-end">
+			<div class="flex items-center justify-end md:hidden">
 				<button on:click={toggleNavbar}>
 					<svg
-						class="burger-icon dark:text-white w-6 h-6 text-gray-900"
+						class="burger-icon h-6 w-6 text-gray-900 dark:text-white"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
@@ -55,11 +55,11 @@
 			</div>
 		</div>
 
-		<div class="md:flex items-center hidden gap-4 px-2 py-2">
-			<div class="gap-x-4 flex">
+		<div class="hidden items-center gap-4 px-2 py-2 md:flex">
+			<div class="flex gap-x-4">
 				{#each Object.entries(headerLinks) as [key, value]}
-					<div class="bg-white/80 dark:bg-gray-800 border rounded-md">
-						<a href={value} class="dark:text-white block px-2 py-1 font-semibold text-gray-900"
+					<div class="rounded-md border bg-white/80 dark:bg-gray-800">
+						<a href={value} class="block px-2 py-1 font-semibold text-gray-900 dark:text-white"
 							>{key}</a
 						>
 					</div>
@@ -68,19 +68,19 @@
 		</div>
 	</div>
 
-	<div class="md:flex hidden">
+	<div class="hidden md:flex">
 		<ThemeSwitcher />
 	</div>
 </div>
 
 {#if isMobileMenuOpen}
 	<div
-		class="dark:bg-black md:hidden fixed inset-0 z-50 flex flex-col items-center justify-center p-4 space-y-6 bg-white"
+		class="fixed inset-0 z-50 flex flex-col items-center justify-center space-y-6 bg-white p-4 dark:bg-black md:hidden"
 		transition:fly={{ x: 1000, duration: 300 }}
 	>
 		<button on:click={toggleNavbar}>
 			<svg
-				class="close-icon dark:text-white w-6 h-6 text-gray-900"
+				class="close-icon h-6 w-6 text-gray-900 dark:text-white"
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
@@ -99,7 +99,7 @@
 			{#each Object.entries(headerLinks) as [key, value]}
 				<a
 					href={value}
-					class="dark:text-white block text-xl font-semibold text-gray-900"
+					class="block text-xl font-semibold text-gray-900 dark:text-white"
 					on:click={toggleNavbar}>{key}</a
 				>
 			{/each}
