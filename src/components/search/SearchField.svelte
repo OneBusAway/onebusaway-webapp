@@ -1,5 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { t } from 'svelte-i18n';
 
 	const dispatch = createEventDispatcher();
 
@@ -23,7 +24,7 @@
 </script>
 
 <div>
-	<label for="search" class="sr-only">Search</label>
+	<label for="search" class="sr-only">{$t('search.search')}</label>
 	<div class="mt-2 flex rounded-md shadow-sm">
 		<div class="relative flex flex-grow items-stretch focus-within:z-10">
 			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -48,7 +49,7 @@
 				name="search"
 				id="search"
 				class="block w-full rounded-none rounded-l-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-				placeholder="Search for stops, routes, and places"
+				placeholder={$t('search.placeholder')}
 				bind:value
 				on:keydown={onHandleSearch}
 			/>
@@ -70,7 +71,7 @@
 					clip-rule="evenodd"
 				/>
 			</svg>
-			<span class="sr-only">Search</span>
+			<span class="sr-only"> </span>
 		</button>
 	</div>
 </div>
