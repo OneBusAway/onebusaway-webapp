@@ -6,8 +6,6 @@
 	} from '$env/static/public';
 
 	import ThemeSwitcher from '$lib/ThemeSwitch/ThemeSwitcher.svelte';
-	import { t } from 'svelte-i18n';
-	import '$lib/i18n';
 	let headerLinks = null;
 
 	if (PUBLIC_NAV_BAR_LINKS) {
