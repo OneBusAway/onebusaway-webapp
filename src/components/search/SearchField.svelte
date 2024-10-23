@@ -24,11 +24,11 @@
 
 <div>
 	<label for="search" class="sr-only">Search</label>
-	<div class="flex mt-2 rounded-md shadow-sm">
-		<div class="focus-within:z-10 relative flex items-stretch flex-grow">
-			<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+	<div class="mt-2 flex rounded-md shadow-sm">
+		<div class="relative flex flex-grow items-stretch focus-within:z-10">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 				<svg
-					class="dark:text-gray-400 w-4 h-4 text-gray-500"
+					class="h-4 w-4 text-gray-500 dark:text-gray-400"
 					aria-hidden="true"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -56,7 +56,7 @@
 		<button
 			type="button"
 			on:click={onHandleSearch}
-			class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-300 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:hover:text-gray-900"
+			class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-900"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
