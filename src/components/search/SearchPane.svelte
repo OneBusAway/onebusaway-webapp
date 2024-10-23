@@ -5,6 +5,7 @@
 	import { compassDirection } from '$lib/formatters';
 	import { prioritizedRouteTypeForDisplay } from '$config/routeConfig';
 	import { faMapPin, faSignsPost } from '@fortawesome/free-solid-svg-icons';
+	import { t } from 'svelte-i18n';
 
 	const dispatch = createEventDispatcher();
 
@@ -109,9 +110,9 @@
 
 		{#if query}
 			<p class="text-sm text-gray-700 dark:text-gray-400">
-				Search results for "{query}".
+				{$t('search.results_for')} "{query}".
 				<button type="button" on:click={clearResults} class="text-blue-600 hover:underline">
-					Clear results
+					{$t('search.clear_results')}
 				</button>
 			</p>
 		{/if}
@@ -131,7 +132,7 @@
 					<SearchResultItem
 						on:click={() => handleRouteClick(route)}
 						icon={prioritizedRouteTypeForDisplay(route.type)}
-						title={`Route ${route.nullSafeShortName || route.id}`}
+						title={`${$t('route')} ${route.nullSafeShortName || route.id}`}
 						subtitle={route.description}
 					/>
 				{/each}
