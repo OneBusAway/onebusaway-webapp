@@ -7,8 +7,7 @@ const locale = getLocaleFromNavigator();
 
 const lang = locale ? locale.split('-')[0] : 'en';
 
-
 init({
-  fallbackLocale: 'en',
-  initialLocale: lang,
+	fallbackLocale: 'en',
+	initialLocale: lang
 });
