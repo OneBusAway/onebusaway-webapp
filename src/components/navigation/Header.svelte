@@ -6,12 +6,20 @@
 	} from '$env/static/public';
 
 	import ThemeSwitcher from '$lib/ThemeSwitch/ThemeSwitcher.svelte';
-
+	import { t } from 'svelte-i18n';
+	import '$lib/i18n';
 	let headerLinks = null;
 
 	if (PUBLIC_NAV_BAR_LINKS) {
 		headerLinks = JSON.parse(PUBLIC_NAV_BAR_LINKS);
 	}
+
+	const translationKeys = {
+		Home: 'home',
+		About: 'about',
+		Contact: 'contact',
+		'Fares & Tolls': 'fares_and_tolls'
+	};
 </script>
 
 <div
@@ -30,9 +38,9 @@
 		<div class="flex gap-x-4">
 			{#each Object.entries(headerLinks) as [key, value]}
 				<div class="rounded-md border bg-white/80 dark:bg-gray-800">
-					<a href={value} class="block px-2 py-1 font-semibold text-gray-900 dark:text-white"
-						>{key}</a
-					>
+					<a href={value} class="block px-2 py-1 font-semibold text-gray-900 dark:text-white">
+						{$t(`header.${translationKeys[key]}`)}
+					</a>
 				</div>
 			{/each}
 		</div>
