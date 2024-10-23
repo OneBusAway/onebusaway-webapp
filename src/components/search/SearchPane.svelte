@@ -102,15 +102,15 @@
 </script>
 
 <div
-	class="bg-blur-sm flex w-96 justify-between rounded-lg border-gray-500 bg-white/90 px-4 shadow-lg dark:bg-black dark:text-white"
+	class="bg-blur-sm w-96 bg-white/90 dark:bg-black dark:text-white dark:shadow-lg dark:shadow-gray-200/10 flex justify-between px-4 border-gray-500 rounded-lg shadow-lg"
 >
-	<div class="flex w-full flex-col gap-y-4 py-4">
+	<div class="gap-y-4 flex flex-col w-full py-4">
 		<SearchField value={query} on:searchResults={handleSearchResults} />
 
 		{#if query}
-			<p class="text-sm text-gray-700 dark:text-gray-400">
+			<p class="dark:text-gray-400 text-sm text-gray-700">
 				Search results for "{query}".
-				<button type="button" on:click={clearResults} class="text-blue-600 hover:underline">
+				<button type="button" on:click={clearResults} class="hover:underline text-blue-600">
 					Clear results
 				</button>
 			</p>
