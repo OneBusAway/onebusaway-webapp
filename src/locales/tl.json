@@ -1,0 +1,29 @@
+{
+	"search": {
+		"placeholder": "Maghanap ng mga hintuan, ruta, at lugar",
+		"results_for": "Mga resulta ng paghahanap para sa",
+		"clear_results": "I-clear ang mga resulta",
+		"search": "Maghanap"
+	},
+	"header": {
+		"home": "Home",
+		"about": "Tungkol sa amin",
+		"contact": "Makipag-ugnayan",
+		"fares_and_tolls": "Pamasahe at mga buwis"
+	},
+	"status": {
+		"scheduled": "naka-iskedyul",
+		"early": "maaga",
+		"late": "huli",
+		"on_time": "oras",
+		"min": "minuto",
+		"arrives_on_time": "dumarating ng oras",
+		"scheduled_not_real_time": "Naka-iskedyul/hindi real-time"
+	},
+	"arrivals_and_departures": "Mga pagdating at pag-alis",
+	"stop": "Hintuan",
+	"routes": "Mga ruta",
+	"route": "ruta",
+	"loading": "Naglo-load",
+	"arrives": "dumarating"
+}

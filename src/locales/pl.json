@@ -1,0 +1,29 @@
+{
+	"search": {
+		"placeholder": "Szukaj przystanków, tras i miejsc",
+		"results_for": "Wyniki wyszukiwania dla",
+		"clear_results": "Wyczyść wyniki",
+		"search": "Szukaj"
+	},
+	"header": {
+		"home": "Strona główna",
+		"about": "O nas",
+		"contact": "Kontakt",
+		"fares_and_tolls": "Opłaty i myta"
+	},
+	"status": {
+		"scheduled": "zaplanowany",
+		"early": "wcześnie",
+		"late": "spóźniony",
+		"on_time": "na czas",
+		"min": "min",
+		"arrives_on_time": "przyjeżdża na czas",
+		"scheduled_not_real_time": "Zaplanowane/nie w czasie rzeczywistym"
+	},
+	"arrivals_and_departures": "Przyjazdy i odjazdy",
+	"stop": "Przystanek",
+	"routes": "Trasy",
+	"route": "trasa",
+	"loading": "Ładowanie",
+	"arrives": "przyjeżdża"
+}
