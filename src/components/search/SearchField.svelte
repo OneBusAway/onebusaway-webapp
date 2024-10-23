@@ -71,7 +71,7 @@
 					clip-rule="evenodd"
 				/>
 			</svg>
-			<span class="sr-only"> </span>
+			<span class="sr-only"> {$t('search.search')} </span>
 		</button>
 	</div>
 </div>
