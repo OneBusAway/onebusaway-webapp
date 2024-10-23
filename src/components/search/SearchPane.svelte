@@ -102,7 +102,7 @@
 </script>
 
 <div
-	class="bg-blur-sm flex w-96 justify-between rounded-lg border-gray-500 bg-white/90 px-4 shadow-lg dark:bg-black dark:text-white"
+	class="bg-blur-sm flex w-96 justify-between rounded-lg border-gray-500 bg-white/90 px-4 shadow-lg dark:bg-black dark:text-white dark:shadow-lg dark:shadow-gray-200/10"
 >
 	<div class="flex w-full flex-col gap-y-4 py-4">
 		<SearchField value={query} on:searchResults={handleSearchResults} />
