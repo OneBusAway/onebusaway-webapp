@@ -1,4 +1,4 @@
-# OneBusAway WebApp
+# Wayfinder
 
 This is the next-generation OneBusAway web application, built on top of [SvelteKit](https://kit.svelte.dev). It is designed to replace the [onebusaway-enterprise-webapp](https://github.com/OneBusAway/onebusaway-application-modules) project. This project is under active development!
 
